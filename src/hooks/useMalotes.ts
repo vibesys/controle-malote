@@ -12,13 +12,16 @@ export function useMalotes(tipoTabela: string = "recepcao") {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("useMalotes initialized with tipo_tabela:", tipoTabela);
     fetchMalotes();
   }, [tipoTabela]);
 
   const fetchMalotes = async () => {
     try {
       setLoading(true);
+      console.log("Fetching malotes for tipo_tabela:", tipoTabela);
       const filteredMalotes = await malotesDB.getByTipo(tipoTabela);
+      console.log("Fetched malotes:", filteredMalotes);
       setMalotes(filteredMalotes);
     } catch (error) {
       console.error("Erro ao carregar malotes:", error);

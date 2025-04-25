@@ -208,7 +208,24 @@ export const malotesDB = {
     if (error) throw error;
     return data;
   },
-  create: async (malote: Omit<any, 'id'>) => {
+  create: async (malote: {
+    data_cadastro: string;
+    documento_recebido: string;
+    data_chegada: string;
+    como_chegou: string;
+    informar_outros?: string;
+    empresa_id?: string;
+    razao_social: string;
+    pessoa_remetente: string;
+    departamento_id?: string;
+    nome_departamento: string;
+    destinatario_id?: string;
+    nome_destinatario: string;
+    pessoa_que_recebeu: string;
+    data_entrega: string;
+    tipo_tabela: string;
+  }) => {
+    console.log("Creating malote with tipo_tabela:", malote.tipo_tabela);
     const { data, error } = await supabase
       .from('malotes')
       .insert(malote)

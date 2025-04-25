@@ -1,4 +1,3 @@
-
 import { Malote } from "@/types/malote";
 import { useForm } from "react-hook-form";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
@@ -45,11 +44,12 @@ export const MaloteFormDialog = ({
   });
 
   const handleSubmit = (data: Malote) => {
-    // Garantir que o tipo da tabela seja preservado
+    // Ensure the tipo_tabela is preserved
     const updatedData = {
       ...data,
       tipo_tabela: malote?.tipo_tabela || tipoTabela
     };
+    console.log("Saving edited malote with tipo_tabela:", updatedData.tipo_tabela);
     onSave(updatedData);
   };
 

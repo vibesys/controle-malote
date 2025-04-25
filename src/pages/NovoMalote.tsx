@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { z } from "zod";
@@ -43,7 +44,7 @@ import {
   meiosTransporteDB, 
   malotesDB,
   logsDB 
-} from "@/utils/localStorage";
+} from "@/utils/supabaseDB";
 import { Empresa, Departamento, Destinatario, MeioTransporte } from "@/utils/localStorage";
 
 interface TitulosTipos {
@@ -242,6 +243,7 @@ export default function NovoMalote() {
         tipo_tabela: tipoTabela
       };
       
+      console.log("Creating malote with data:", newMalote);
       await malotesDB.create(newMalote);
       
       await logsDB.create({
