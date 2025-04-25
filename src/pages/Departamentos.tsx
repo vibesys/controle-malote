@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -19,7 +18,7 @@ import {
 import { showSuccessToast, showConfirmDialog } from "@/components/ui/toast-custom";
 import { Trash2 } from "lucide-react";
 import { currentUser } from "@/types/user";
-import { departamentosDB, logsDB } from "@/utils/localStorage";
+import { departamentosDB, logsDB } from "@/utils/supabaseDB";
 
 // Schema de validação
 const formSchema = z.object({
@@ -30,7 +29,6 @@ export default function Departamentos() {
   const [departamentos, setDepartamentos] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   
-  // Carrega dados do localStorage
   useEffect(() => {
     fetchDepartamentos();
   }, []);
@@ -38,9 +36,7 @@ export default function Departamentos() {
   const fetchDepartamentos = async () => {
     try {
       setIsLoading(true);
-      const data = departamentosDB.getAll();
-      // Sort by name
-      data.sort((a, b) => a.nome_departamento.localeCompare(b.nome_departamento));
+      const data = await departamentosDB.getAll();
       setDepartamentos(data);
     } catch (error) {
       console.error('Erro ao carregar departamentos:', error);
@@ -60,10 +56,9 @@ export default function Departamentos() {
     setIsLoading(true);
     
     try {
-      departamentosDB.create({ nome_departamento: values.nome_departamento });
+      await departamentosDB.create({ nome_departamento: values.nome_departamento });
       
-      // Registra log da ação
-      logsDB.create({
+      await logsDB.create({
         acao: "Criou departamento",
         usuario_email: currentUser.username,
         data_hora: new Date().toISOString(),
@@ -85,10 +80,9 @@ export default function Departamentos() {
       `Deseja excluir o departamento ${departamento.nome_departamento}?`,
       async () => {
         try {
-          departamentosDB.remove(departamento.id);
+          await departamentosDB.remove(departamento.id);
           
-          // Registra log da ação
-          logsDB.create({
+          await logsDB.create({
             acao: "Excluiu departamento",
             usuario_email: currentUser.username,
             data_hora: new Date().toISOString(),

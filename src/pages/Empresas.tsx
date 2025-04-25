@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -19,7 +18,8 @@ import {
 import { showSuccessToast, showConfirmDialog } from "@/components/ui/toast-custom";
 import { Trash2 } from "lucide-react";
 import { currentUser } from "@/types/user";
-import { empresasDB, logsDB } from "@/utils/localStorage";
+import { logsDB } from "@/utils/supabaseDB";
+import { empresasDB } from "@/utils/supabaseDB";
 
 // Schema de validação
 const formSchema = z.object({
@@ -38,9 +38,7 @@ export default function Empresas() {
   const fetchEmpresas = async () => {
     try {
       setIsLoading(true);
-      const data = empresasDB.getAll();
-      // Sort by name
-      data.sort((a, b) => a.razao_social.localeCompare(b.razao_social));
+      const data = await empresasDB.getAll();
       setEmpresas(data);
     } catch (error) {
       console.error('Erro ao carregar empresas:', error);
@@ -60,10 +58,9 @@ export default function Empresas() {
     setIsLoading(true);
     
     try {
-      empresasDB.create({ razao_social: values.razao_social });
+      await empresasDB.create({ razao_social: values.razao_social });
       
-      // Registra log da ação
-      logsDB.create({
+      await logsDB.create({
         acao: "Criou empresa",
         usuario_email: currentUser.username,
         data_hora: new Date().toISOString(),
@@ -85,10 +82,9 @@ export default function Empresas() {
       `Deseja excluir a empresa ${empresa.razao_social}?`,
       async () => {
         try {
-          empresasDB.remove(empresa.id);
+          await empresasDB.remove(empresa.id);
           
-          // Registra log da ação
-          logsDB.create({
+          await logsDB.create({
             acao: "Excluiu empresa",
             usuario_email: currentUser.username,
             data_hora: new Date().toISOString(),

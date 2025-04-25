@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -19,7 +18,7 @@ import {
 import { showSuccessToast, showConfirmDialog } from "@/components/ui/toast-custom";
 import { Trash2 } from "lucide-react";
 import { currentUser } from "@/types/user";
-import { destinatariosDB, logsDB } from "@/utils/localStorage";
+import { destinatariosDB, logsDB } from "@/utils/supabaseDB";
 
 // Schema de validação
 const formSchema = z.object({
@@ -30,7 +29,6 @@ export default function Destinatarios() {
   const [destinatarios, setDestinatarios] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   
-  // Carrega dados do localStorage
   useEffect(() => {
     fetchDestinatarios();
   }, []);
@@ -38,9 +36,7 @@ export default function Destinatarios() {
   const fetchDestinatarios = async () => {
     try {
       setIsLoading(true);
-      const data = destinatariosDB.getAll();
-      // Sort by name
-      data.sort((a, b) => a.nome_destinatario.localeCompare(b.nome_destinatario));
+      const data = await destinatariosDB.getAll();
       setDestinatarios(data);
     } catch (error) {
       console.error('Erro ao carregar destinatários:', error);
@@ -60,10 +56,9 @@ export default function Destinatarios() {
     setIsLoading(true);
     
     try {
-      destinatariosDB.create({ nome_destinatario: values.nome_destinatario });
+      await destinatariosDB.create({ nome_destinatario: values.nome_destinatario });
       
-      // Registra log da ação
-      logsDB.create({
+      await logsDB.create({
         acao: "Criou destinatário",
         usuario_email: currentUser.username,
         data_hora: new Date().toISOString(),
@@ -85,10 +80,9 @@ export default function Destinatarios() {
       `Deseja excluir o destinatário ${destinatario.nome_destinatario}?`,
       async () => {
         try {
-          destinatariosDB.remove(destinatario.id);
+          await destinatariosDB.remove(destinatario.id);
           
-          // Registra log da ação
-          logsDB.create({
+          await logsDB.create({
             acao: "Excluiu destinatário",
             usuario_email: currentUser.username,
             data_hora: new Date().toISOString(),

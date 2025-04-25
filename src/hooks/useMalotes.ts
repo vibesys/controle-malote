@@ -4,7 +4,7 @@ import { Malote } from "@/types/malote";
 import { showSuccessToast } from "@/components/ui/toast-custom";
 import { currentUser } from "@/types/user";
 import { parseBrazilianDate } from "@/utils/maloteUtils";
-import { malotesDB, logsDB } from "@/utils/localStorage";
+import { malotesDB, logsDB } from "@/utils/supabaseDB";
 
 export function useMalotes(tipoTabela: string = "recepcao") {
   const [malotes, setMalotes] = useState<Malote[]>([]);
@@ -18,15 +18,7 @@ export function useMalotes(tipoTabela: string = "recepcao") {
   const fetchMalotes = async () => {
     try {
       setLoading(true);
-      // Get all malotes and filter by tipo_tabela
-      let allMalotes = malotesDB.getAll();
-      let filteredMalotes = allMalotes.filter(m => m.tipo_tabela === tipoTabela);
-      
-      // Sort by data_cadastro desc
-      filteredMalotes.sort((a, b) => 
-        new Date(b.data_cadastro).getTime() - new Date(a.data_cadastro).getTime()
-      );
-      
+      const filteredMalotes = await malotesDB.getByTipo(tipoTabela);
       setMalotes(filteredMalotes);
     } catch (error) {
       console.error("Erro ao carregar malotes:", error);
@@ -45,9 +37,9 @@ export function useMalotes(tipoTabela: string = "recepcao") {
         data_entrega: parseBrazilianDate(maloteAtualizado.data_entrega as any),
       };
       
-      malotesDB.update(processedMalote.id, processedMalote);
+      await malotesDB.update(processedMalote.id, processedMalote);
       
-      logsDB.create({
+      await logsDB.create({
         acao: "Editou malote",
         usuario_email: currentUser.username,
         data_hora: new Date().toISOString(),
@@ -65,9 +57,9 @@ export function useMalotes(tipoTabela: string = "recepcao") {
 
   const handleDelete = async (malote: Malote) => {
     try {
-      malotesDB.remove(malote.id);
+      await malotesDB.remove(malote.id);
       
-      logsDB.create({
+      await logsDB.create({
         acao: "Excluiu malote",
         usuario_email: currentUser.username,
         data_hora: new Date().toISOString(),
@@ -87,9 +79,9 @@ export function useMalotes(tipoTabela: string = "recepcao") {
     try {
       const selectedIds = selectedItems.map(item => item.id);
       
-      malotesDB.removeMany(selectedIds);
+      await malotesDB.removeMany(selectedIds);
       
-      logsDB.create({
+      await logsDB.create({
         acao: "Excluiu múltiplos malotes",
         usuario_email: currentUser.username,
         data_hora: new Date().toISOString(),

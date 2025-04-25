@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { PageContainer } from "@/components/layout/page-container";
 import { Button } from "@/components/ui/button";
@@ -6,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus } from "lucide-react";
 import { showSuccessToast } from "@/components/ui/toast-custom";
-import { meiosTransporteDB } from "@/utils/localStorage";
+import { meiosTransporteDB } from "@/utils/supabaseDB";
 import { MeioTransporte } from "@/utils/localStorage";
 
 export default function ComoChegou() {
@@ -21,9 +20,7 @@ export default function ComoChegou() {
   const fetchMeiosTransporte = async () => {
     try {
       setIsLoading(true);
-      const data = meiosTransporteDB.getAll();
-      // Sort by name
-      data.sort((a, b) => a.nome.localeCompare(b.nome));
+      const data = await meiosTransporteDB.getAll();
       setMeiosTransporte(data);
     } catch (error) {
       console.error('Erro ao carregar meios de transporte:', error);
@@ -35,7 +32,7 @@ export default function ComoChegou() {
   const handleAdd = async () => {
     if (novoMeioTransporte.trim()) {
       try {
-        meiosTransporteDB.create({ nome: novoMeioTransporte.trim() });
+        await meiosTransporteDB.create({ nome: novoMeioTransporte.trim() });
         await fetchMeiosTransporte();
         setNovoMeioTransporte("");
         showSuccessToast("Meio de transporte adicionado com sucesso!");

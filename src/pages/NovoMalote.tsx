@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { z } from "zod";
@@ -101,18 +100,17 @@ export default function NovoMalote() {
 
   const fetchData = async () => {
     try {
-      // Load all data from localStorage
-      const empresasData = empresasDB.getAll();
-      setEmpresas(empresasData.sort((a, b) => a.razao_social.localeCompare(b.razao_social)));
+      const empresasData = await empresasDB.getAll();
+      setEmpresas(empresasData);
       
-      const departamentosData = departamentosDB.getAll();
-      setDepartamentos(departamentosData.sort((a, b) => a.nome_departamento.localeCompare(b.nome_departamento)));
+      const departamentosData = await departamentosDB.getAll();
+      setDepartamentos(departamentosData);
       
-      const destinatariosData = destinatariosDB.getAll();
-      setDestinatarios(destinatariosData.sort((a, b) => a.nome_destinatario.localeCompare(b.nome_destinatario)));
+      const destinatariosData = await destinatariosDB.getAll();
+      setDestinatarios(destinatariosData);
       
-      const meiosTransporteData = meiosTransporteDB.getAll();
-      setMeiosTransporte(meiosTransporteData.sort((a, b) => a.nome.localeCompare(b.nome)));
+      const meiosTransporteData = await meiosTransporteDB.getAll();
+      setMeiosTransporte(meiosTransporteData);
     } catch (error) {
       console.error('Erro ao carregar dados iniciais:', error);
     }
@@ -138,9 +136,9 @@ export default function NovoMalote() {
   const handleAddEmpresa = async () => {
     if (empresaNome.trim()) {
       try {
-        const newEmpresa = empresasDB.create({ razao_social: empresaNome });
+        await empresasDB.create({ razao_social: empresaNome });
         
-        logsDB.create({
+        await logsDB.create({
           acao: "Criou empresa",
           usuario_email: currentUser.username,
           data_hora: new Date().toISOString(),
@@ -160,9 +158,9 @@ export default function NovoMalote() {
   const handleAddDepartamento = async () => {
     if (departamentoNome.trim()) {
       try {
-        departamentosDB.create({ nome_departamento: departamentoNome });
+        await departamentosDB.create({ nome_departamento: departamentoNome });
         
-        logsDB.create({
+        await logsDB.create({
           acao: "Criou departamento",
           usuario_email: currentUser.username,
           data_hora: new Date().toISOString(),
@@ -182,9 +180,9 @@ export default function NovoMalote() {
   const handleAddDestinatario = async () => {
     if (destinatarioNome.trim()) {
       try {
-        destinatariosDB.create({ nome_destinatario: destinatarioNome });
+        await destinatariosDB.create({ nome_destinatario: destinatarioNome });
         
-        logsDB.create({
+        await logsDB.create({
           acao: "Criou destinatário",
           usuario_email: currentUser.username,
           data_hora: new Date().toISOString(),
@@ -204,7 +202,7 @@ export default function NovoMalote() {
   const handleAddComoChegou = async () => {
     if (novoMeioTransporte.trim()) {
       try {
-        meiosTransporteDB.create({ nome: novoMeioTransporte });
+        await meiosTransporteDB.create({ nome: novoMeioTransporte });
         
         await fetchData();
         setNovoMeioTransporte("");
@@ -222,12 +220,10 @@ export default function NovoMalote() {
     try {
       console.log("Starting onSubmit with tipo_tabela:", tipoTabela);
       
-      // Find related entities
       const empresaData = empresas.find(e => e.id === values.empresa_id);
       const departamentoData = departamentos.find(d => d.id === values.departamento_id);
       const destinatarioData = destinatarios.find(d => d.id === values.destinatario_id);
       
-      // Prepare malote data
       const newMalote = {
         data_cadastro: values.data_cadastro.toISOString(),
         documento_recebido: values.documento_recebido,
@@ -246,11 +242,9 @@ export default function NovoMalote() {
         tipo_tabela: tipoTabela
       };
       
-      // Save to localStorage
-      malotesDB.create(newMalote);
+      await malotesDB.create(newMalote);
       
-      // Log the action
-      logsDB.create({
+      await logsDB.create({
         acao: `Criou malote (${tipoTabela})`,
         usuario_email: currentUser.username,
         data_hora: new Date().toISOString(),
