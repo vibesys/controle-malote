@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { AuthResponse } from "@/types/user";
 
 export const usersDB = {
   authenticate: async (username: string, password: string) => {
@@ -10,9 +11,11 @@ export const usersDB = {
       });
       
       if (error) throw error;
-      if (data && data.error) throw new Error(data.error);
       
-      return data;
+      const authResponse = data as AuthResponse;
+      if (authResponse && authResponse.error) throw new Error(authResponse.error);
+      
+      return authResponse;
     } catch (error) {
       console.error('Authentication error:', error);
       throw error;
@@ -29,9 +32,11 @@ export const usersDB = {
       });
       
       if (error) throw error;
-      if (data && data.error) throw new Error(data.error);
       
-      return data;
+      const authResponse = data as AuthResponse;
+      if (authResponse && authResponse.error) throw new Error(authResponse.error);
+      
+      return authResponse;
     } catch (error) {
       console.error('Create user error:', error);
       throw error;

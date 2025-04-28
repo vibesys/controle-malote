@@ -2,7 +2,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { usersDB } from "@/utils/supabase";
-import { User } from "@/types/user";
+import { User, AuthResponse } from "@/types/user";
 import { showErrorToast, showSuccessToast } from "@/components/ui/toast-custom";
 
 interface AuthContextType {
@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       setLoading(true);
       
-      const userData = await usersDB.authenticate(username, password);
+      const userData: AuthResponse = await usersDB.authenticate(username, password);
       
       if (!userData) {
         throw new Error("Usuário ou senha inválidos");

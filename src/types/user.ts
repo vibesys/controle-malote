@@ -15,3 +15,12 @@ export const currentUser = {
   name: "Administrador",
   isAdmin: true
 };
+
+// Define a type for the authentication response from Supabase
+export interface AuthResponse {
+  id: string;
+  username: string;
+  name: string;
+  role: string;
+  error?: string;
+}
