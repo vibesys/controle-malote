@@ -4,7 +4,7 @@ import { Malote } from "@/types/malote";
 import { showSuccessToast } from "@/components/ui/toast-custom";
 import { currentUser } from "@/types/user";
 import { parseBrazilianDate } from "@/utils/maloteUtils";
-import { malotesDB, logsDB } from "@/utils/supabaseDB";
+import { malotesDB, logsDB } from "@/utils/supabase";
 
 export function useMalotes(tipoTabela: string = "recepcao") {
   const [malotes, setMalotes] = useState<Malote[]>([]);

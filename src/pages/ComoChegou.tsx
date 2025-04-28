@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { PageContainer } from "@/components/layout/page-container";
 import { Button } from "@/components/ui/button";
@@ -5,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus } from "lucide-react";
 import { showSuccessToast } from "@/components/ui/toast-custom";
-import { meiosTransporteDB } from "@/utils/supabaseDB";
+import { meiosTransporteDB } from "@/utils/supabase";
 import { MeioTransporte } from "@/utils/localStorage";
 
 export default function ComoChegou() {

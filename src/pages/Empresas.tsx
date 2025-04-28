@@ -18,8 +18,8 @@ import {
 import { showSuccessToast, showConfirmDialog } from "@/components/ui/toast-custom";
 import { Trash2 } from "lucide-react";
 import { currentUser } from "@/types/user";
-import { logsDB } from "@/utils/supabaseDB";
-import { empresasDB } from "@/utils/supabaseDB";
+import { logsDB } from "@/utils/supabase";
+import { empresasDB } from "@/utils/supabase";
 
 // Schema de validação
 const formSchema = z.object({

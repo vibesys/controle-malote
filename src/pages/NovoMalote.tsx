@@ -44,7 +44,7 @@ import {
   meiosTransporteDB, 
   malotesDB,
   logsDB 
-} from "@/utils/supabaseDB";
+} from "@/utils/supabase";
 import { Empresa, Departamento, Destinatario, MeioTransporte } from "@/utils/localStorage";
 
 interface TitulosTipos {

@@ -32,7 +32,6 @@ export const MalotesContent = ({
   onDeleteSelected,
 }: MalotesContentProps) => {
   const [currentPage, setCurrentPage] = useState(1);
-  // Keep these state variables but we won't use them for editing
   const [maloteEmEdicao, setMaloteEmEdicao] = useState<Malote | null>(null);
   const [dialogAberto, setDialogAberto] = useState(false);
 
@@ -64,7 +63,6 @@ export const MalotesContent = ({
         malotes={currentMalotes}
         onDelete={onDelete}
         onSelectionChange={onSelectionChange}
-        // Remove the onEdit prop completely to disable editing
       />
 
       <MalotesPagination 
@@ -73,7 +71,6 @@ export const MalotesContent = ({
         onPageChange={setCurrentPage}
       />
 
-      {/* Keep the dialog component but it won't be shown since dialogAberto is never set to true */}
       <MaloteFormDialog
         open={dialogAberto}
         onClose={() => {
