@@ -37,7 +37,7 @@ import {
 
 const formSchema = z.object({
   name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
-  username: z.string().email("Informe um e-mail válido"),
+  username: z.string().min(3, "Usuário deve ter pelo menos 3 caracteres"),
   password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
   role: z.string().min(1, "Selecione um perfil"),
 });

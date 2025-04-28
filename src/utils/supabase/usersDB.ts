@@ -12,7 +12,7 @@ export const usersDB = {
       
       if (error) throw error;
       
-      const authResponse = data as AuthResponse;
+      const authResponse = data as unknown as AuthResponse;
       if (authResponse && authResponse.error) throw new Error(authResponse.error);
       
       return authResponse;
@@ -33,7 +33,7 @@ export const usersDB = {
       
       if (error) throw error;
       
-      const authResponse = data as AuthResponse;
+      const authResponse = data as unknown as AuthResponse;
       if (authResponse && authResponse.error) throw new Error(authResponse.error);
       
       return authResponse;

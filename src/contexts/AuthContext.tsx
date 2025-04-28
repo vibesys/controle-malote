@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { usersDB } from "@/utils/supabase";
@@ -22,7 +21,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user is already logged in (from localStorage)
     const loadUser = () => {
       const savedUser = localStorage.getItem('user');
       
@@ -60,7 +58,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         role: userData.role
       };
       
-      // Save to localStorage for persistence
       localStorage.setItem('user', JSON.stringify(user));
       setUser(user);
       
@@ -85,10 +82,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!user) return false;
     
     try {
-      // First verify the current password is correct
       await usersDB.authenticate(user.username, currentPassword);
       
-      // Update the password
       await usersDB.updateUser(user.id, { password: newPassword });
       
       showSuccessToast("Senha alterada com sucesso!");
@@ -103,13 +98,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const checkAccess = (requiredRole?: string, requiredScreen?: string) => {
     if (!user) return false;
     
-    // Admin has access to everything
     if (user.role === 'administrador') return true;
     
-    // If a specific role is required, check it
     if (requiredRole && user.role !== requiredRole) return false;
     
-    // If a specific screen is required, check user's role-based permissions
     if (requiredScreen) {
       switch (user.role) {
         case 'recepcao':
