@@ -4,10 +4,11 @@ export interface User {
   username: string;
   name: string;
   isAdmin: boolean;
+  role: string;
   password?: string;
 }
 
-// Current user singleton for easy access across the app
+// For backward compatibility with existing code
 export const currentUser = {
   id: "1",
   username: "admin@aguiadehaiacourier.com",

@@ -5,3 +5,4 @@ export { destinatariosDB } from './destinatariosDB';
 export { meiosTransporteDB } from './meiosTransporteDB';
 export { malotesDB } from './malotesDB';
 export { logsDB } from './logsDB';
+export { usersDB } from './usersDB';

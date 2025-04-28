@@ -1,10 +1,20 @@
+
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Menu } from "lucide-react";
+import { Home, Menu, User, LogOut, Key, Settings } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function Header() {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const handleNavigation = (path: string) => {
     navigate(path, { replace: false });
@@ -28,6 +38,38 @@ export function Header() {
             <Home className="h-5 w-5 mr-2" />
             Início
           </Button>
+          
+          {/* User menu dropdown */}
+          {user && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="text-white hover:bg-blue-medium">
+                  <User className="h-5 w-5 mr-2" />
+                  {user.name}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {user.isAdmin && (
+                  <>
+                    <DropdownMenuItem onClick={() => handleNavigation("/usuarios")}>
+                      <Settings className="h-4 w-4 mr-2" />
+                      <span>Gerenciar Usuários</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
+                <DropdownMenuItem onClick={() => handleNavigation("/alterar-senha")}>
+                  <Key className="h-4 w-4 mr-2" />
+                  <span>Alterar Senha</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={logout}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  <span>Sair</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
         
         {/* Menu mobile */}
@@ -47,6 +89,36 @@ export function Header() {
                   <Home className="h-5 w-5 mr-2" />
                   Início
                 </Button>
+                
+                {user && (
+                  <>
+                    {user.isAdmin && (
+                      <Button 
+                        variant="ghost" 
+                        className="flex justify-start" 
+                        onClick={() => handleNavigation("/usuarios")}>
+                        <Settings className="h-5 w-5 mr-2" />
+                        Gerenciar Usuários
+                      </Button>
+                    )}
+                    
+                    <Button 
+                      variant="ghost" 
+                      className="flex justify-start" 
+                      onClick={() => handleNavigation("/alterar-senha")}>
+                      <Key className="h-5 w-5 mr-2" />
+                      Alterar Senha
+                    </Button>
+                    
+                    <Button 
+                      variant="ghost" 
+                      className="flex justify-start" 
+                      onClick={logout}>
+                      <LogOut className="h-5 w-5 mr-2" />
+                      Sair
+                    </Button>
+                  </>
+                )}
               </div>
             </SheetContent>
           </Sheet>
