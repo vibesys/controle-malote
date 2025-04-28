@@ -24,6 +24,8 @@ export const usersDB = {
   
   createUser: async (name: string, username: string, password: string, role: string) => {
     try {
+      console.log("Creating user with data:", { name, username, role }); // Debug log
+      
       const { data, error } = await supabase.rpc('create_user', { 
         name, 
         username, 
@@ -31,7 +33,12 @@ export const usersDB = {
         role
       });
       
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
+      
+      console.log("User creation response:", data); // Debug log
       
       const authResponse = data as unknown as AuthResponse;
       if (authResponse && authResponse.error) throw new Error(authResponse.error);

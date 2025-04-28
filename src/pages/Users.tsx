@@ -251,9 +251,9 @@ export default function Users() {
                   name="username"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Usuário (E-mail)</FormLabel>
+                      <FormLabel>Usuário</FormLabel>
                       <FormControl>
-                        <Input placeholder="email@exemplo.com" {...field} />
+                        <Input placeholder="Nome de usuário" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
