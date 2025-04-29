@@ -23,7 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { showSuccessToast, useConfirmDialog } from "@/components/ui/toast-custom";
+import { showSuccessToast, showErrorToast, useConfirmDialog } from "@/components/ui/toast-custom";
 import { Trash2, Edit, UserCog, Key } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { usersDB, logsDB } from "@/utils/supabase";
@@ -55,6 +55,7 @@ export default function Users() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [currentEditUser, setCurrentEditUser] = useState<any>(null);
   const { showDialog, Dialog: ConfirmDialog } = useConfirmDialog();
+  const [createError, setCreateError] = useState<string | null>(null);
   
   // Access control check
   useEffect(() => {
@@ -74,6 +75,7 @@ export default function Users() {
       setUsers(data);
     } catch (error) {
       console.error('Erro ao carregar usuários:', error);
+      showErrorToast("Não foi possível carregar a lista de usuários.");
     } finally {
       setIsLoading(false);
     }
@@ -100,9 +102,23 @@ export default function Users() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
+    setCreateError(null);
     
     try {
-      await usersDB.createUser(values.name, values.username, values.password, values.role);
+      console.log("Submitting user creation form:", values);
+      
+      const response = await usersDB.createUser(
+        values.name, 
+        values.username, 
+        values.password, 
+        values.role
+      );
+      
+      console.log("User creation response:", response);
+      
+      if (response && response.error) {
+        throw new Error(response.error);
+      }
       
       await logsDB.create({
         acao: "Criou usuário",
@@ -114,8 +130,10 @@ export default function Users() {
       await fetchUsers();
       showSuccessToast("Usuário cadastrado com sucesso!");
       form.reset();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao cadastrar usuário:', error);
+      setCreateError(error.message || "Erro ao cadastrar usuário.");
+      showErrorToast(error.message || "Não foi possível cadastrar o usuário.");
     } finally {
       setIsLoading(false);
     }
@@ -158,8 +176,9 @@ export default function Users() {
       setIsEditDialogOpen(false);
       await fetchUsers();
       showSuccessToast("Usuário atualizado com sucesso!");
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao atualizar usuário:', error);
+      showErrorToast(error.message || "Não foi possível atualizar o usuário.");
     } finally {
       setIsLoading(false);
     }
@@ -168,7 +187,7 @@ export default function Users() {
   const handleDelete = async (user: any) => {
     // Cannot delete yourself
     if (user.username === currentUser?.username) {
-      showSuccessToast("Você não pode excluir seu próprio usuário!", "error");
+      showErrorToast("Você não pode excluir seu próprio usuário!");
       return;
     }
     
@@ -187,8 +206,9 @@ export default function Users() {
           
           await fetchUsers();
           showSuccessToast("Usuário excluído com sucesso!");
-        } catch (error) {
+        } catch (error: any) {
           console.error('Erro ao excluir usuário:', error);
+          showErrorToast(error.message || "Não foi possível excluir o usuário.");
         }
       }
     );
@@ -302,6 +322,9 @@ export default function Users() {
                     </FormItem>
                   )}
                 />
+                {createError && (
+                  <div className="text-red-500 text-sm mt-2">{createError}</div>
+                )}
                 <Button 
                   type="submit" 
                   className="w-full bg-blue-medium hover:bg-blue-dark mt-4"
