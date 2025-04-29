@@ -77,13 +77,13 @@ const App = () => {
               } />
               
               <Route path="/malotes/novo" element={
-                <ProtectedRoute>
+                <ProtectedRoute requiredScreen={`malotes-${new URLSearchParams(window.location.search).get('tipo') || 'recepcao'}`}>
                   <NovoMalote />
                 </ProtectedRoute>
               } />
               
               <Route path="/malotes" element={
-                <ProtectedRoute>
+                <ProtectedRoute requiredScreen={`malotes-${new URLSearchParams(window.location.search).get('tipo') || 'recepcao'}`}>
                   <Malotes />
                 </ProtectedRoute>
               } />

@@ -72,10 +72,13 @@ export const usersDB = {
     try {
       console.log("Fetching users list");
       
-      const { data, error } = await supabase
+      // Add debug information to check why no users are being returned
+      const { data, error, count } = await supabase
         .from('users')
-        .select('*')
+        .select('*', { count: 'exact' })
         .order('name');
+      
+      console.log("Users query response:", { data, error, count });
       
       if (error) {
         console.error("Error fetching users:", error);

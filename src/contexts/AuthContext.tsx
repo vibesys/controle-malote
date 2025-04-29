@@ -104,35 +104,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const checkAccess = (requiredRole?: string, requiredScreen?: string) => {
     if (!user) return false;
     
+    // Administrators can access everything
     if (user.role === 'administrador') return true;
     
+    // If a specific role is required, check that first
     if (requiredRole && user.role !== requiredRole) return false;
     
+    // If a specific screen is required, check access based on user role
     if (requiredScreen) {
-      switch (user.role) {
-        case 'recepcao':
-          if (requiredScreen.includes('triagem') || 
-              requiredScreen.includes('dp-rh') ||
-              requiredScreen === 'usuarios') {
-            return false;
-          }
-          break;
-        case 'triagem':
-          if (requiredScreen.includes('recepcao') || 
-              requiredScreen.includes('dp-rh') ||
-              requiredScreen === 'usuarios') {
-            return false;
-          }
-          break;
-        case 'dp-rh':
-          if (requiredScreen.includes('recepcao') || 
-              requiredScreen.includes('triagem') ||
-              requiredScreen === 'usuarios') {
-            return false;
-          }
-          break;
-        default:
-          return false;
+      // For screen-specific checks
+      if (requiredScreen === 'usuarios') {
+        return false; // Only admins can access users management (already checked above)
+      }
+      
+      // For malotes screens, check if role matches the requested type
+      if (requiredScreen.startsWith('malotes-')) {
+        const screenType = requiredScreen.replace('malotes-', '');
+        return user.role === screenType;
       }
     }
     
