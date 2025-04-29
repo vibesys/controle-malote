@@ -110,9 +110,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // If a specific role is required, check that first
     if (requiredRole && user.role !== requiredRole) return false;
     
-    // If a specific screen is required, check access based on user role
+    // For screen-specific checks
     if (requiredScreen) {
-      // For screen-specific checks
+      // Only admins can access users management 
       if (requiredScreen === 'usuarios') {
         return false; // Only admins can access users management (already checked above)
       }
@@ -120,6 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // For malotes screens, check if role matches the requested type
       if (requiredScreen.startsWith('malotes-')) {
         const screenType = requiredScreen.replace('malotes-', '');
+        console.log(`Checking access for ${requiredScreen}, user role: ${user.role}, screen type: ${screenType}`);
         return user.role === screenType;
       }
     }

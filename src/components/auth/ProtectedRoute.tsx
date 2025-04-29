@@ -45,10 +45,14 @@ export function ProtectedRoute({
   if (!user) {
     return <Navigate to="/login" />;
   }
+
+  // For debugging purposes
+  console.log(`Protected route: requiredRole=${requiredRole}, requiredScreen=${requiredScreen}, user.role=${user?.role}`);
   
   // Check role-based access
   if (requiredRole || requiredScreen) {
     const hasAccess = checkAccess(requiredRole, requiredScreen);
+    console.log(`Access check result: ${hasAccess}`);
     
     if (!hasAccess) {
       return (
