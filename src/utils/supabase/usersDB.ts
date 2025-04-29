@@ -27,10 +27,10 @@ export const usersDB = {
       console.log("Creating user with data:", { name, username, role }); // Debug log
       
       const { data, error } = await supabase.rpc('create_user', { 
-        name, 
-        username, 
-        password,
-        role
+        name: name.trim(), 
+        username: username.trim(), 
+        password: password.trim(),
+        role: role.trim()
       });
       
       if (error) {
@@ -39,6 +39,11 @@ export const usersDB = {
       }
       
       console.log("User creation response:", data); // Debug log
+      
+      // Special handling for null response
+      if (data === null) {
+        throw new Error("Não foi possível criar o usuário. Verifique se o nome de usuário já existe.");
+      }
       
       const authResponse = data as unknown as AuthResponse;
       if (authResponse && authResponse.error) throw new Error(authResponse.error);
@@ -71,11 +76,15 @@ export const usersDB = {
         .from('users')
         .update(updates)
         .eq('id', id)
-        .select()
-        .single();
+        .select();
       
       if (error) throw error;
-      return data;
+      
+      if (!data || data.length === 0) {
+        throw new Error("Usuário não encontrado");
+      }
+      
+      return data[0];
     } catch (error) {
       console.error('Update user error:', error);
       throw error;

@@ -45,10 +45,12 @@ export default function ChangePassword() {
     try {
       const success = await changePassword(values.currentPassword, values.newPassword);
       if (success) {
+        showSuccessToast("Senha alterada com sucesso!");
         form.reset();
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Change password error:", error);
+      showErrorToast(error.message || "Falha ao alterar senha");
     } finally {
       setIsSubmitting(false);
     }

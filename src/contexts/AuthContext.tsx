@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { usersDB } from "@/utils/supabase";
@@ -82,15 +83,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!user) return false;
     
     try {
+      // First verify the current password
       await usersDB.authenticate(user.username, currentPassword);
       
+      // Then update the password
       await usersDB.updateUser(user.id, { password: newPassword });
       
-      showSuccessToast("Senha alterada com sucesso!");
       return true;
     } catch (error: any) {
       console.error("Change password error:", error);
-      showErrorToast(error.message || "Falha ao alterar senha");
+      if (error.message.includes("Invalid")) {
+        showErrorToast("Senha atual incorreta");
+      } else {
+        showErrorToast(error.message || "Falha ao alterar senha");
+      }
       return false;
     }
   };
