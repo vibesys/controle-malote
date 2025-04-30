@@ -28,7 +28,7 @@ const formSchema = z.object({
 });
 
 export default function ChangePassword() {
-  const { changePassword } = useAuth();
+  const { changePassword, user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -42,6 +42,15 @@ export default function ChangePassword() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
+    
+    if (!user) {
+      showErrorToast("Usuário não encontrado. Por favor, faça login novamente.");
+      setIsSubmitting(false);
+      return;
+    }
+    
+    console.log("Changing password for user:", user.username);
+    
     try {
       const success = await changePassword(values.currentPassword, values.newPassword);
       if (success) {
@@ -61,71 +70,78 @@ export default function ChangePassword() {
       <div className="flex justify-center">
         <Card className="w-full max-w-md shadow-md">
           <CardContent className="pt-6">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="currentPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Senha Atual</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="password" 
-                          placeholder="Digite sua senha atual" 
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="newPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nova Senha</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="password" 
-                          placeholder="Digite sua nova senha" 
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="confirmPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Confirmar Nova Senha</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="password" 
-                          placeholder="Confirme sua nova senha" 
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <Button 
-                  type="submit" 
-                  className="w-full bg-blue-medium hover:bg-blue-dark"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? "Alterando..." : "Alterar Senha"}
-                </Button>
-              </form>
-            </Form>
+            {!user ? (
+              <div className="text-center p-4">
+                <p className="text-red-600 mb-4">Usuário não autenticado</p>
+                <p className="text-gray-600">Por favor, faça login para alterar sua senha.</p>
+              </div>
+            ) : (
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="currentPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Senha Atual</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="password" 
+                            placeholder="Digite sua senha atual" 
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="newPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nova Senha</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="password" 
+                            placeholder="Digite sua nova senha" 
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <FormField
+                    control={form.control}
+                    name="confirmPassword"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Confirmar Nova Senha</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="password" 
+                            placeholder="Confirme sua nova senha" 
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-blue-medium hover:bg-blue-dark"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Alterando..." : "Alterar Senha"}
+                  </Button>
+                </form>
+              </Form>
+            )}
           </CardContent>
         </Card>
       </div>

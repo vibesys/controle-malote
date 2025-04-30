@@ -89,6 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Then update the password
       await usersDB.updateUser(user.id, { password: newPassword });
       
+      showSuccessToast("Senha alterada com sucesso!");
       return true;
     } catch (error: any) {
       console.error("Change password error:", error);
@@ -104,29 +105,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const checkAccess = (requiredRole?: string, requiredScreen?: string) => {
     if (!user) return false;
     
+    // Debug information
+    console.log(`Access check for user role: ${user.role}, requiredRole: ${requiredRole}, requiredScreen: ${requiredScreen}`);
+    
     // Administrators can access everything
-    if (user.role === 'administrador') return true;
+    if (user.role === 'administrador') {
+      console.log("User is admin - granting access");
+      return true;
+    }
     
     // If a specific role is required, check that first
-    if (requiredRole && user.role !== requiredRole) return false;
+    if (requiredRole && user.role !== requiredRole) {
+      console.log(`Role mismatch: required ${requiredRole}, user has ${user.role} - denying access`);
+      return false;
+    }
     
     // For screen-specific checks
     if (requiredScreen) {
       // Only admins can access users management 
       if (requiredScreen === 'usuarios') {
-        return false; // Only admins can access users management (already checked above)
+        console.log("Non-admin attempting to access users management - denying access");
+        return false; 
       }
       
       // For malotes screens, check if role matches the requested type
       if (requiredScreen.startsWith('malotes-')) {
         const screenType = requiredScreen.replace('malotes-', '');
-        console.log(`Checking access for ${requiredScreen}, user role: ${user.role}, screen type: ${screenType}`);
+        console.log(`Malote access check: screen type ${screenType}, user role ${user.role}`);
         
-        // Fix: Allow each role to access their specific screens
-        return user.role === screenType;
+        // Grant access if user role matches the screen type
+        if (user.role === screenType) {
+          console.log("Granting access - role matches screen type");
+          return true;
+        } else {
+          console.log("Denying access - role doesn't match screen type");
+          return false;
+        }
       }
     }
     
+    // Default to allow access for non-specific routes
+    console.log("No specific restrictions apply - granting access");
     return true;
   };
 
