@@ -121,6 +121,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (requiredScreen.startsWith('malotes-')) {
         const screenType = requiredScreen.replace('malotes-', '');
         console.log(`Checking access for ${requiredScreen}, user role: ${user.role}, screen type: ${screenType}`);
+        
+        // Fix: Allow each role to access their specific screens
         return user.role === screenType;
       }
     }

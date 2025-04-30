@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { AuthResponse } from "@/types/user";
 
@@ -71,12 +72,12 @@ export const usersDB = {
     try {
       console.log("Fetching users list");
       
-      // Using FROM 'users' instead of from('users') 
-      const { data, error, count } = await supabase
+      // Enhanced query for better debugging
+      const { data, error } = await supabase
         .from('users')
-        .select('*', { count: 'exact' });
+        .select('*');
       
-      console.log("Users query response:", { data, error, count });
+      console.log("Users query response:", { data: data?.length || 0, error });
       
       if (error) {
         console.error("Error fetching users:", error);
