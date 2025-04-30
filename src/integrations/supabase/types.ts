@@ -172,46 +172,12 @@ export type Database = {
         }
         Relationships: []
       }
-      users: {
-        Row: {
-          created_at: string
-          id: string
-          name: string
-          password: string
-          role: string
-          username: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          name: string
-          password: string
-          role: string
-          username: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          name?: string
-          password?: string
-          role?: string
-          username?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      authenticate: {
-        Args: { username: string; password: string }
-        Returns: Json
-      }
-      create_user: {
-        Args: { name: string; username: string; password: string; role: string }
-        Returns: Json
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never

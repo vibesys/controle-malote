@@ -5,13 +5,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import Login from "./pages/Login";
-import ChangePassword from "./pages/ChangePassword";
-import Users from "./pages/Users";
 import Empresas from "./pages/Empresas";
 import Departamentos from "./pages/Departamentos";
 import Destinatarios from "./pages/Destinatarios";
@@ -36,79 +31,18 @@ const App = () => {
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <AuthProvider>
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              
-              <Route path="/" element={
-                <ProtectedRoute>
-                  <Index />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/empresas" element={
-                <ProtectedRoute>
-                  <Empresas />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/departamentos" element={
-                <ProtectedRoute>
-                  <Departamentos />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/destinatarios" element={
-                <ProtectedRoute>
-                  <Destinatarios />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/malotes/tipo" element={
-                <ProtectedRoute>
-                  <SelecionarTipoVisualizacao />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/malotes/novo/tipo" element={
-                <ProtectedRoute>
-                  <SelecionarTipoNovoMalote />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/malotes/novo" element={
-                <ProtectedRoute requiredScreen={`malotes-${new URLSearchParams(window.location.search).get('tipo') || 'recepcao'}`}>
-                  <NovoMalote />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/malotes" element={
-                <ProtectedRoute requiredScreen={`malotes-${new URLSearchParams(window.location.search).get('tipo') || 'recepcao'}`}>
-                  <Malotes />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/como-chegou" element={
-                <ProtectedRoute>
-                  <ComoChegou />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/usuarios" element={
-                <ProtectedRoute requiredRole="administrador" requiredScreen="usuarios">
-                  <Users />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="/alterar-senha" element={
-                <ProtectedRoute>
-                  <ChangePassword />
-                </ProtectedRoute>
-              } />
-              
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </AuthProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/empresas" element={<Empresas />} />
+            <Route path="/departamentos" element={<Departamentos />} />
+            <Route path="/destinatarios" element={<Destinatarios />} />
+            <Route path="/malotes/tipo" element={<SelecionarTipoVisualizacao />} />
+            <Route path="/malotes/novo/tipo" element={<SelecionarTipoNovoMalote />} />
+            <Route path="/malotes/novo" element={<NovoMalote />} />
+            <Route path="/malotes" element={<Malotes />} />
+            <Route path="/como-chegou" element={<ComoChegou />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
