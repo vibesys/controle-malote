@@ -72,7 +72,7 @@ export const usersDB = {
     try {
       console.log("Fetching users list");
       
-      // Fixed query with improved approach and debugging
+      // Enhanced query to ensure we get all users, ordered by creation date
       const { data, error } = await supabase
         .from('users')
         .select('*')
