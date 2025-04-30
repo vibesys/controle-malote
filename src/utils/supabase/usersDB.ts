@@ -72,10 +72,11 @@ export const usersDB = {
     try {
       console.log("Fetching users list");
       
-      // Fixed query with debug logging
+      // Fixed query with improved approach and debugging
       const { data, error } = await supabase
         .from('users')
-        .select('*');
+        .select('*')
+        .order('created_at', { ascending: false });
       
       // Log entire response for debugging
       console.log("Raw users response:", { data, error });
@@ -88,7 +89,7 @@ export const usersDB = {
       if (!data || data.length === 0) {
         console.log("No users found in the database");
       } else {
-        console.log(`Successfully fetched ${data.length} users`);
+        console.log(`Successfully fetched ${data.length} users:`, data);
       }
       
       return data || [];

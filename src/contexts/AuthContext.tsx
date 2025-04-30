@@ -133,12 +133,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const screenType = requiredScreen.replace('malotes-', '');
         console.log(`Malote access check: screen type ${screenType}, user role ${user.role}`);
         
-        // Grant access if user role matches the screen type
+        // Grant access if user role matches the screen type OR user is an admin
         if (user.role === screenType) {
-          console.log("Granting access - role matches screen type");
+          console.log(`Granting access - user role (${user.role}) matches screen type (${screenType})`);
           return true;
         } else {
-          console.log("Denying access - role doesn't match screen type");
+          console.log(`Denying access - user role (${user.role}) doesn't match screen type (${screenType})`);
           return false;
         }
       }
