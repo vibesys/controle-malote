@@ -1,11 +1,8 @@
 
-// Default user to use for logging
-export const currentUser = {
-  id: "1",
-  username: "admin@aguiadehaiacourier.com",
-  name: "Administrador",
-  isAdmin: true
-};
+import { currentUser as userFromTypes } from "@/types/user";
+
+// Use the currentUser from types.ts
+export const currentUser = userFromTypes;
 
 export function getCurrentUser() {
   return currentUser;
