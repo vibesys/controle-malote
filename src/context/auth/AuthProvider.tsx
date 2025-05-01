@@ -53,48 +53,42 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signIn = async (username: string, password: string) => {
-    setIsLoading(true);
-    try {
-      // Call the authenticate function
-      const { data, error } = await supabase.rpc('authenticate', {
-        username,
-        password
-      });
+  const signIn = async (email: string, password: string) => {
+  setIsLoading(true);
+  try {
+    // Autenticação oficial Supabase
+    const { data: { session }, error } = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
 
-      if (error) throw error;
-      
-      // Handle the data response which could be an error message or user data
-      if (data && typeof data === 'object' && 'error' in data) {
-        showErrorToast(data.error as string);
-        setIsLoading(false);
-        return;
-      }
+    if (error) throw error;
 
-      // If authentication successful, set user data
-      if (data && typeof data === 'object') {
-        const typedData = data as unknown as UserData;
-        
-        setUserData({
-          id: typedData.id,
-          username: typedData.username,
-          name: typedData.name,
-          role: typedData.role
-        });
-        
-        // Log the action
-        await logUserAction('Login no sistema', username, 'Login bem-sucedido');
-        
-        showSuccessToast('Login realizado com sucesso!');
-        navigate('/');
-      }
-    } catch (error) {
-      console.error('Error during sign in:', error);
-      showErrorToast('Erro ao fazer login. Verifique suas credenciais.');
-    } finally {
-      setIsLoading(false);
+    if (!session || !session.user) {
+      showErrorToast('Falha na autenticação');
+      return;
     }
-  };
+
+    setSession(session);
+    setUser(session.user);
+
+    // Carrega dados extras do usuário
+    const data = await fetchUserData(session.user.id);
+    setUserData(data);
+
+    // Log da ação
+    await logUserAction('Login no sistema', email, 'Login bem-sucedido');
+
+    showSuccessToast('Login realizado com sucesso!');
+    navigate('/');
+  } catch (error) {
+    console.error('Erro ao fazer login:', error);
+    showErrorToast('Erro ao fazer login. Verifique suas credenciais.');
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   const signOut = async () => {
     setIsLoading(true);
