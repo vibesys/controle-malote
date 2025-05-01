@@ -115,12 +115,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const changePassword = async (currentPassword: string, newPassword: string): Promise<boolean> => {
-    setIsLoading(true);
-    try {
-      if (!userData) {
-        showErrorToast('Usuário não está autenticado');
-        return false;
-      }
+  setIsLoading(true);
+  try {
+    if (!userData || !session) {
+      showErrorToast('Usuário não está autenticado ou a sessão expirou');
+      return false;
+    }
       
       // Verify current password
       const { data: verifyData, error: verifyError } = await supabase.rpc('authenticate', {
