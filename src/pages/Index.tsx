@@ -1,11 +1,9 @@
-
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { PageContainer } from "@/components/layout/page-container";
 import { Building, Mail, Building2, Inbox, MailPlus, Bike } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { useAuth } from "@/context/AuthContext";
-import { UserRole } from "@/context/AuthContext";
+import { useAuth, UserRole } from "@/context/auth";
 
 export default function Index() {
   const navigate = useNavigate();

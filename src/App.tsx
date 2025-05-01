@@ -16,9 +16,9 @@ import ComoChegou from "./pages/ComoChegou";
 import SelecionarTipoVisualizacao from "./pages/SelecionarTipoVisualizacao";
 import SelecionarTipoNovoMalote from "./pages/SelecionarTipoNovoMalote";
 import Login from "./pages/Login";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider } from "./context/auth";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import { UserRole } from "./context/AuthContext";
+import { UserRole } from "./context/auth";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
