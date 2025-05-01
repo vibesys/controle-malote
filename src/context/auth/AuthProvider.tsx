@@ -135,10 +135,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
       
       // Update password directly in the users table
-      const { error } = await supabase
-        .from('users')
-        .update({ password: newPassword })
-        .eq('id', userData.id);
+      const { error } = await supabase.auth.updateUser({
+  password: newPassword
+});
+
         
       if (error) {
         console.error('Error updating password:', error);
