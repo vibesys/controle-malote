@@ -141,10 +141,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
         
       if (error) {
-        console.error('Error updating password:', error);
-        showErrorToast('Erro ao atualizar a senha');
-        return false;
-      }
+  console.error('Erro ao atualizar a senha:', error);
+  showErrorToast(`Erro ao atualizar a senha: ${error.message || 'Detalhes não disponíveis'}`);
+  return false;
+}
+
       
       // Log password change
       await logUserAction('Alteração de senha', userData.username);
