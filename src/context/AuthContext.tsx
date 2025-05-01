@@ -98,19 +98,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       if (error) throw error;
       
-      if (data && data.error) {
-        showErrorToast(data.error);
+      // Handle the data response which could be an error message or user data
+      if (data && typeof data === 'object' && 'error' in data) {
+        showErrorToast(data.error as string);
         setIsLoading(false);
         return;
       }
 
       // If authentication successful, set user data
-      if (data) {
+      if (data && typeof data === 'object') {
+        const typedData = data as unknown as UserData;
+        
         setUserData({
-          id: data.id,
-          username: data.username,
-          name: data.name,
-          role: data.role
+          id: typedData.id,
+          username: typedData.username,
+          name: typedData.name,
+          role: typedData.role
         });
         
         // Log the action
@@ -168,7 +171,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         password: currentPassword
       });
 
-      if (verifyError || (verifyData && verifyData.error)) {
+      // Safely check for error in response
+      if (verifyError || (verifyData && typeof verifyData === 'object' && 'error' in verifyData)) {
         showErrorToast('Senha atual incorreta');
         return false;
       }
