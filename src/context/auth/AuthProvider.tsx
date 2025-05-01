@@ -134,21 +134,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return false;
       }
       
-      // Update password
+      // Update password directly in the users table
       const { error } = await supabase
         .from('users')
         .update({ password: newPassword })
         .eq('id', userData.id);
         
       if (error) {
+        console.error('Error updating password:', error);
         showErrorToast('Erro ao atualizar a senha');
         return false;
       }
       
       // Log password change
       await logUserAction('Alteração de senha', userData.username);
-      
-      showSuccessToast('Senha alterada com sucesso!');
       return true;
     } catch (error) {
       console.error('Error during password change:', error);

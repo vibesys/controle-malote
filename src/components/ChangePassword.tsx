@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useAuth } from '@/context/auth';
 import { Button } from '@/components/ui/button';
@@ -10,6 +11,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { showSuccessToast, showErrorToast } from '@/components/ui/toast-custom';
 
 export function ChangePassword() {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,7 +43,11 @@ export function ChangePassword() {
       if (success) {
         setIsOpen(false);
         resetForm();
+        showSuccessToast('Senha alterada com sucesso!');
       }
+    } catch (error) {
+      console.error("Erro ao mudar senha:", error);
+      setError('Erro ao alterar a senha. Verifique se a senha atual está correta.');
     } finally {
       setIsChanging(false);
     }

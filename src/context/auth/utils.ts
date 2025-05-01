@@ -1,7 +1,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { showSuccessToast, showErrorToast } from '@/components/ui/toast-custom';
-import { UserData } from './types';
+import { UserData, UserRole } from './types';
 
 // Function to fetch user data from Supabase
 export async function fetchUserData(userId: string): Promise<UserData | null> {
@@ -21,7 +21,7 @@ export async function fetchUserData(userId: string): Promise<UserData | null> {
       id: data.id,
       username: data.username,
       name: data.name,
-      role: data.role
+      role: data.role as UserRole // Explicitly cast to UserRole type
     };
   }
   
