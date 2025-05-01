@@ -134,7 +134,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return false;
       }
       
-      // Update password directly in the users table
+      // Update password using official Supabase API
       const { error } = await supabase.auth.updateUser({
   password: newPassword
 });
