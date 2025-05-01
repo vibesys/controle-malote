@@ -121,43 +121,39 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       showErrorToast('Usuário não está autenticado ou a sessão expirou');
       return false;
     }
-      
-      // Verify current password
-      const { data: verifyData, error: verifyError } = await supabase.rpc('authenticate', {
-        username: userData.username,
-        password: currentPassword
-      });
+    
+    // Restante do código para alterar a senha
+    const { data: verifyData, error: verifyError } = await supabase.rpc('authenticate', {
+      username: userData.username,
+      password: currentPassword
+    });
 
-      // Safely check for error in response
-      if (verifyError || (verifyData && typeof verifyData === 'object' && 'error' in verifyData)) {
-        showErrorToast('Senha atual incorreta');
-        return false;
-      }
-      
-      // Update password using official Supabase API
-      const { error } = await supabase.auth.updateUser({
-  password: newPassword
-});
-
-        
-      if (error) {
-  console.error('Erro ao atualizar a senha:', error);
-  showErrorToast(`Erro ao atualizar a senha: ${error.message || 'Detalhes não disponíveis'}`);
-  return false;
-}
-
-      
-      // Log password change
-      await logUserAction('Alteração de senha', userData.username);
-      return true;
-    } catch (error) {
-      console.error('Error during password change:', error);
-      showErrorToast('Erro ao alterar senha.');
+    if (verifyError || (verifyData && typeof verifyData === 'object' && 'error' in verifyData)) {
+      showErrorToast('Senha atual incorreta');
       return false;
-    } finally {
-      setIsLoading(false);
     }
-  };
+    
+    const { error } = await supabase.auth.updateUser({
+      password: newPassword
+    });
+
+    if (error) {
+      console.error('Erro ao atualizar a senha:', error);
+      showErrorToast('Erro ao atualizar a senha');
+      return false;
+    }
+
+    await logUserAction('Alteração de senha', userData.username);
+    return true;
+  } catch (error) {
+    console.error('Erro ao alterar a senha:', error);
+    showErrorToast('Erro ao alterar a senha.');
+    return false;
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <AuthContext.Provider value={{ 
