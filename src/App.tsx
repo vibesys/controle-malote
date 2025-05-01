@@ -4,7 +4,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useEffect } from "react";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Empresas from "./pages/Empresas";
@@ -15,34 +14,83 @@ import Malotes from "./pages/Malotes";
 import ComoChegou from "./pages/ComoChegou";
 import SelecionarTipoVisualizacao from "./pages/SelecionarTipoVisualizacao";
 import SelecionarTipoNovoMalote from "./pages/SelecionarTipoNovoMalote";
-import { initializeCollections } from "./utils/localStorage";
+import Login from "./pages/Login";
+import { AuthProvider } from "./context/AuthContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { UserRole } from "./context/AuthContext";
 
 const queryClient = new QueryClient();
 
-const App = () => {
-  // Initialize localStorage collections when app starts
-  useEffect(() => {
-    initializeCollections();
-  }, []);
+// Helper function to determine allowed roles for each route
+const getRolesForType = (type: string | null): UserRole[] => {
+  switch (type) {
+    case 'recepcao':
+      return ['recepcao'];
+    case 'triagem':
+      return ['triagem'];
+    case 'dp-rh':
+      return ['dp-rh'];
+    default:
+      return ['administrador', 'recepcao', 'triagem', 'dp-rh'];
+  }
+};
 
+const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/empresas" element={<Empresas />} />
-            <Route path="/departamentos" element={<Departamentos />} />
-            <Route path="/destinatarios" element={<Destinatarios />} />
-            <Route path="/malotes/tipo" element={<SelecionarTipoVisualizacao />} />
-            <Route path="/malotes/novo/tipo" element={<SelecionarTipoNovoMalote />} />
-            <Route path="/malotes/novo" element={<NovoMalote />} />
-            <Route path="/malotes" element={<Malotes />} />
-            <Route path="/como-chegou" element={<ComoChegou />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AuthProvider>
+            <Routes>
+              {/* Public route */}
+              <Route path="/login" element={<Login />} />
+              
+              {/* Protected routes */}
+              <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+              <Route path="/empresas" element={<ProtectedRoute><Empresas /></ProtectedRoute>} />
+              <Route path="/departamentos" element={<ProtectedRoute><Departamentos /></ProtectedRoute>} />
+              <Route path="/destinatarios" element={<ProtectedRoute><Destinatarios /></ProtectedRoute>} />
+              <Route path="/como-chegou" element={<ProtectedRoute><ComoChegou /></ProtectedRoute>} />
+              
+              {/* Type-specific protected routes */}
+              <Route path="/malotes/tipo" element={<ProtectedRoute><SelecionarTipoVisualizacao /></ProtectedRoute>} />
+              <Route path="/malotes/novo/tipo" element={<ProtectedRoute><SelecionarTipoNovoMalote /></ProtectedRoute>} />
+              
+              <Route path="/malotes/novo" element={
+                <ProtectedRoute>
+                  {({ location }) => {
+                    const params = new URLSearchParams(location.search);
+                    const tipo = params.get('tipo');
+                    const allowedRoles = getRolesForType(tipo);
+                    return (
+                      <ProtectedRoute allowedRoles={allowedRoles}>
+                        <NovoMalote />
+                      </ProtectedRoute>
+                    );
+                  }}
+                </ProtectedRoute>
+              } />
+              
+              <Route path="/malotes" element={
+                <ProtectedRoute>
+                  {({ location }) => {
+                    const params = new URLSearchParams(location.search);
+                    const tipo = params.get('tipo');
+                    const allowedRoles = getRolesForType(tipo);
+                    return (
+                      <ProtectedRoute allowedRoles={allowedRoles}>
+                        <Malotes />
+                      </ProtectedRoute>
+                    );
+                  }}
+                </ProtectedRoute>
+              } />
+              
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

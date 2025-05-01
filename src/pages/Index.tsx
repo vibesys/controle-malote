@@ -4,48 +4,64 @@ import { Button } from "@/components/ui/button";
 import { PageContainer } from "@/components/layout/page-container";
 import { Building, Mail, Building2, Inbox, MailPlus, Bike } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useAuth } from "@/context/AuthContext";
+import { UserRole } from "@/context/AuthContext";
 
 export default function Index() {
   const navigate = useNavigate();
+  const { userData } = useAuth();
+  const userRole = userData?.role || 'anonymous';
   
-  const menuItems = [
+  // Define menu items with role-based access
+  const allMenuItems = [
     {
       title: "Malotes Recebidos",
       icon: <Inbox className="h-12 w-12" />,
       path: "/malotes/tipo",
-      color: "bg-blue-dark"
+      color: "bg-blue-dark",
+      roles: ['administrador', 'recepcao', 'triagem', 'dp-rh']
     },
     {
       title: "Cadastrar Empresa",
       icon: <Building className="h-12 w-12" />,
       path: "/empresas",
-      color: "bg-blue-medium"
+      color: "bg-blue-medium",
+      roles: ['administrador', 'recepcao', 'triagem', 'dp-rh']
     },
     {
       title: "Cadastrar Departamento",
       icon: <Building2 className="h-12 w-12" />,
       path: "/departamentos",
-      color: "bg-blue-light"
+      color: "bg-blue-light",
+      roles: ['administrador', 'recepcao', 'triagem', 'dp-rh']
     },
     {
       title: "Cadastrar Destinatário",
       icon: <Mail className="h-12 w-12" />,
       path: "/destinatarios",
-      color: "bg-blue-medium"
+      color: "bg-blue-medium",
+      roles: ['administrador', 'recepcao', 'triagem', 'dp-rh']
     },
     {
       title: "Cadastrar Como Chegou",
       icon: <Bike className="h-12 w-12" />,
       path: "/como-chegou",
-      color: "bg-blue-light"
+      color: "bg-blue-light",
+      roles: ['administrador', 'recepcao', 'triagem', 'dp-rh']
     },
     {
       title: "Novo Malote Recebido",
       icon: <MailPlus className="h-12 w-12" />,
       path: "/malotes/novo/tipo",
-      color: "bg-blue-dark"
+      color: "bg-blue-dark",
+      roles: ['administrador', 'recepcao', 'triagem', 'dp-rh']
     }
   ];
+
+  // Filter menu items based on user role
+  const menuItems = allMenuItems.filter(item => 
+    item.roles.includes(userRole as UserRole)
+  );
 
   const handleNavigation = (path: string) => {
     console.log("Navigating to:", path);
@@ -55,7 +71,9 @@ export default function Index() {
   return (
     <PageContainer title="Painel de Controle">
       <div className="relative">
-        <p className="text-xs text-gray-500 mb-4">Quantidade de licenças: 3</p>
+        {userData?.role === 'administrador' && (
+          <p className="text-xs text-gray-500 mb-4">Quantidade de licenças: 3</p>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {menuItems.map((item) => (
             <Card 
