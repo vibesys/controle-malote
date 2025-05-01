@@ -3,8 +3,8 @@ import { useState, useEffect } from "react";
 import { Malote } from "@/types/malote";
 import { showSuccessToast } from "@/components/ui/toast-custom";
 import { parseBrazilianDate } from "@/utils/maloteUtils";
-import { malotesDB, logsDB } from "@/utils/supabaseDB";
-import { useAuth } from "@/context/AuthContext";
+import { malotesDB, logsDB } from "@/utils/supabase";
+import { useAuth } from "@/context/auth";
 
 export function useMalotes(tipoTabela: string = "recepcao") {
   const [malotes, setMalotes] = useState<Malote[]>([]);

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { z } from "zod";
@@ -44,7 +43,7 @@ import {
   meiosTransporteDB, 
   malotesDB,
   logsDB 
-} from "@/utils/supabaseDB";
+} from "@/utils/supabase";
 import { Empresa, Departamento, Destinatario, MeioTransporte } from "@/utils/localStorage";
 
 interface TitulosTipos {

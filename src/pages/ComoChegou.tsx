@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Trash2 } from "lucide-react";
 import { showSuccessToast, showErrorToast } from "@/components/ui/toast-custom";
-import { meiosTransporteDB } from "@/utils/supabaseDB";
+import { meiosTransporteDB } from "@/utils/supabase";
 import { MeioTransporte } from "@/utils/localStorage";
 import { DataTable } from "@/components/ui/data-table";
 import { 
