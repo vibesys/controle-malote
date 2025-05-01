@@ -27,25 +27,42 @@ const useAuth = () => {
   }, []);
 
   const login = async (username: string, password: string) => {
-    setLoading(true);
-    try {
-      // Usando o Supabase para fazer o login
-      const { user, error } = await supabase.auth.signInWithPassword({
-        email: username, // Usando username como email ou modifique conforme o seu fluxo
-        password,
-      });
+  setLoading(true);
+  try {
+    const { user, error } = await supabase.auth.signInWithPassword({
+      email: username, // Pode ser username ou outro campo
+      password,
+    });
 
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      setUser(user); // Armazena o usuário após login
-    } catch (error) {
-      console.error('Erro no login:', error.message);
-    } finally {
-      setLoading(false);
+    if (error) {
+      throw new Error(error.message);
     }
-  };
+
+    // Agora, busque o perfil do usuário na tabela `profiles`
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('user_id', user?.id)
+      .single(); // Espera-se que tenha apenas um perfil
+
+    if (profileError) {
+      throw new Error('Erro ao buscar perfil do usuário');
+    }
+
+    // Agora você tem acesso ao perfil e permissões
+    setUser({
+      ...user,
+      role: profile?.role,
+      permissions: profile?.permissions,
+    });
+
+  } catch (error) {
+    console.error('Erro no login:', error.message);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const logout = async () => {
     setLoading(true);
