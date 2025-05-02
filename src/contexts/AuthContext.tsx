@@ -57,15 +57,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return false;
       }
 
-      if (!data.success) {
-        showErrorToast(data.message || "Credenciais inválidas");
+      // Handle response as a record with known structure rather than Json type
+      const response = data as unknown as {
+        success: boolean;
+        message?: string;
+        id?: string;
+        email?: string;
+        perfil?: string;
+      };
+
+      if (!response.success) {
+        showErrorToast(response.message || "Credenciais inválidas");
         return false;
       }
 
       const authUser: AuthUser = {
-        id: data.id,
-        email: data.email,
-        perfil: data.perfil
+        id: response.id!,
+        email: response.email!,
+        perfil: response.perfil as "Administrador" | "dp-rh" | "recepcao" | "triagem"
       };
 
       setUser(authUser);
@@ -106,8 +115,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return false;
       }
 
-      if (!data.success) {
-        showErrorToast(data.message || "Erro ao alterar senha");
+      // Handle response as a record with known structure rather than Json type
+      const response = data as unknown as {
+        success: boolean;
+        message?: string;
+      };
+
+      if (!response.success) {
+        showErrorToast(response.message || "Erro ao alterar senha");
         return false;
       }
 

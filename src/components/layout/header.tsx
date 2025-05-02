@@ -5,13 +5,13 @@ import { ChevronLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { UserProfileMenu } from "@/components/auth/UserProfileMenu";
 
-interface HeaderProps {
-  title: string;
+export interface HeaderProps {
+  title?: string;
   backUrl?: string;
   children?: React.ReactNode;
 }
 
-export function Header({ title, backUrl, children }: HeaderProps) {
+export function Header({ title = "", backUrl, children }: HeaderProps) {
   const { user } = useAuth();
 
   return (
@@ -26,7 +26,7 @@ export function Header({ title, backUrl, children }: HeaderProps) {
               </Button>
             </Link>
           )}
-          <h1 className="text-xl font-semibold md:text-2xl">{title}</h1>
+          {title && <h1 className="text-xl font-semibold md:text-2xl">{title}</h1>}
         </div>
         <div className="flex items-center gap-2">
           {children}
