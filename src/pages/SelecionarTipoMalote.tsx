@@ -1,66 +1,64 @@
 
 import { useNavigate } from "react-router-dom";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { PageContainer } from "@/components/layout/page-container";
-import { Inbox } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { useAuth } from "@/contexts/AuthContext";
 
-interface OpcaoTipoProps {
-  titulo: string;
+interface TipoProps {
+  title: string;
   tipo: string;
-  destino: string;
+  profiles: string[];
 }
-
-const OpcaoTipo = ({ titulo, tipo, destino }: OpcaoTipoProps) => {
-  const navigate = useNavigate();
-
-  return (
-    <Card className="overflow-hidden transition-all duration-300 shadow-md hover:shadow-lg">
-      <div className="bg-blue-dark text-white p-4 flex justify-center items-center">
-        <Inbox className="h-12 w-12" />
-      </div>
-      <CardContent className="p-6">
-        <h3 className="text-lg font-medium text-center mb-4">{titulo}</h3>
-        <Button 
-          className="w-full bg-blue-medium hover:bg-blue-dark"
-          onClick={() => navigate(`${destino}?tipo=${tipo}`)}
-        >
-          Acessar
-        </Button>
-      </CardContent>
-    </Card>
-  );
-};
 
 interface SelecionarTipoMaloteProps {
   modo: "visualizar" | "novo";
 }
 
 export default function SelecionarTipoMalote({ modo }: SelecionarTipoMaloteProps) {
-  const titulo = modo === "visualizar" 
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const tipos: TipoProps[] = [
+    { title: "Recepção", tipo: "recepcao", profiles: ["Administrador", "recepcao"] },
+    { title: "Triagem", tipo: "triagem", profiles: ["Administrador", "triagem"] },
+    { title: "DP-RH", tipo: "dp-rh", profiles: ["Administrador", "dp-rh"] }
+  ];
+
+  const handleSelect = (tipo: string) => {
+    if (modo === "visualizar") {
+      navigate(`/malotes?tipo=${tipo}`);
+    } else {
+      navigate(`/malotes/novo?tipo=${tipo}`);
+    }
+  };
+
+  // Filter tipos based on user profile
+  const filteredTipos = tipos.filter(tipo => {
+    if (!user) return false;
+    return tipo.profiles.includes(user.perfil);
+  });
+
+  const pageTitle = modo === "visualizar" 
     ? "Selecione o tipo de malote para visualizar" 
     : "Selecione o tipo de malote para cadastrar";
-  
-  const destino = modo === "visualizar" ? "/malotes" : "/malotes/novo";
-  
+
   return (
-    <PageContainer title={titulo} backUrl="/">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <OpcaoTipo 
-          titulo="Recepção" 
-          tipo="recepcao" 
-          destino={destino}
-        />
-        <OpcaoTipo 
-          titulo="Triagem" 
-          tipo="triagem" 
-          destino={destino}
-        />
-        <OpcaoTipo 
-          titulo="DP-RH" 
-          tipo="dp-rh" 
-          destino={destino}
-        />
+    <PageContainer title={pageTitle} backUrl="/">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+        {filteredTipos.map((tipo) => (
+          <Card key={tipo.tipo} className="shadow-md hover:shadow-lg transition-shadow">
+            <CardContent className="p-6 flex flex-col items-center">
+              <h3 className="text-lg font-medium mb-4">{tipo.title}</h3>
+              <Button 
+                onClick={() => handleSelect(tipo.tipo)}
+                className="w-full bg-blue-medium hover:bg-blue-dark"
+              >
+                Selecionar
+              </Button>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </PageContainer>
   );

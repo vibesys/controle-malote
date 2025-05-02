@@ -9,6 +9,33 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      authentication: {
+        Row: {
+          atualizado_em: string | null
+          criado_em: string | null
+          email: string
+          id: string
+          perfil: string
+          senha: string
+        }
+        Insert: {
+          atualizado_em?: string | null
+          criado_em?: string | null
+          email: string
+          id?: string
+          perfil: string
+          senha: string
+        }
+        Update: {
+          atualizado_em?: string | null
+          criado_em?: string | null
+          email?: string
+          id?: string
+          perfil?: string
+          senha?: string
+        }
+        Relationships: []
+      }
       departamentos: {
         Row: {
           id: string
@@ -172,6 +199,30 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          created_at: string | null
+          id: string
+          permissions: Json | null
+          role: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          permissions?: Json | null
+          role?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          permissions?: Json | null
+          role?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           created_at: string
@@ -208,9 +259,29 @@ export type Database = {
         Args: { username: string; password: string }
         Returns: Json
       }
+      authenticate_user: {
+        Args: { p_email: string; p_senha: string }
+        Returns: Json
+      }
       create_user: {
         Args: { name: string; username: string; password: string; role: string }
         Returns: Json
+      }
+      is_admin: {
+        Args: { user_email: string }
+        Returns: boolean
+      }
+      update_password: {
+        Args: {
+          p_user_email: string
+          p_current_password: string
+          p_new_password: string
+        }
+        Returns: Json
+      }
+      update_password_by_username: {
+        Args: { p_username: string; p_new_password: string }
+        Returns: undefined
       }
     }
     Enums: {

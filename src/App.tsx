@@ -5,8 +5,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
+import AcessoNegado from "./pages/AcessoNegado";
 import Empresas from "./pages/Empresas";
 import Departamentos from "./pages/Departamentos";
 import Destinatarios from "./pages/Destinatarios";
@@ -31,18 +35,31 @@ const App = () => {
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/empresas" element={<Empresas />} />
-            <Route path="/departamentos" element={<Departamentos />} />
-            <Route path="/destinatarios" element={<Destinatarios />} />
-            <Route path="/malotes/tipo" element={<SelecionarTipoVisualizacao />} />
-            <Route path="/malotes/novo/tipo" element={<SelecionarTipoNovoMalote />} />
-            <Route path="/malotes/novo" element={<NovoMalote />} />
-            <Route path="/malotes" element={<Malotes />} />
-            <Route path="/como-chegou" element={<ComoChegou />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AuthProvider>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/acesso-negado" element={<AcessoNegado />} />
+              
+              {/* Protected routes */}
+              <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+              
+              {/* Admin only routes */}
+              <Route path="/empresas" element={<ProtectedRoute allowedProfiles={["Administrador"]}><Empresas /></ProtectedRoute>} />
+              <Route path="/departamentos" element={<ProtectedRoute allowedProfiles={["Administrador"]}><Departamentos /></ProtectedRoute>} />
+              <Route path="/destinatarios" element={<ProtectedRoute allowedProfiles={["Administrador"]}><Destinatarios /></ProtectedRoute>} />
+              <Route path="/como-chegou" element={<ProtectedRoute allowedProfiles={["Administrador"]}><ComoChegou /></ProtectedRoute>} />
+              
+              {/* Profile specific routes */}
+              <Route path="/malotes/tipo" element={<ProtectedRoute><SelecionarTipoVisualizacao /></ProtectedRoute>} />
+              <Route path="/malotes/novo/tipo" element={<ProtectedRoute><SelecionarTipoNovoMalote /></ProtectedRoute>} />
+              <Route path="/malotes/novo" element={<ProtectedRoute><NovoMalote /></ProtectedRoute>} />
+              <Route path="/malotes" element={<ProtectedRoute><Malotes /></ProtectedRoute>} />
+              
+              {/* Fallback routes */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

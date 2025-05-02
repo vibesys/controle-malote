@@ -1,55 +1,36 @@
-import { useNavigate } from "react-router-dom";
+
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Home, Menu } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { ChevronLeft } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { UserProfileMenu } from "@/components/auth/UserProfileMenu";
 
-export function Header() {
-  const navigate = useNavigate();
+interface HeaderProps {
+  title: string;
+  backUrl?: string;
+  children?: React.ReactNode;
+}
 
-  const handleNavigation = (path: string) => {
-    navigate(path, { replace: false });
-  };
+export function Header({ title, backUrl, children }: HeaderProps) {
+  const { user } = useAuth();
 
   return (
-    <header className="bg-blue-dark text-white py-4 px-6 flex justify-between items-center shadow-md sticky top-0 z-10">
-      <div className="flex items-center">
-        <h1 className="text-xl font-bold cursor-pointer" onClick={() => handleNavigation("/")}>
-          Controle Malote Águia de Haia
-        </h1>
-      </div>
-      
-      <div className="flex items-center gap-4">
-        {/* Botões de navegação fixos */}
-        <div className="hidden md:flex items-center gap-2">
-          <Button 
-            variant="ghost" 
-            className="text-white hover:bg-blue-medium"
-            onClick={() => handleNavigation("/")}>
-            <Home className="h-5 w-5 mr-2" />
-            Início
-          </Button>
-        </div>
-        
-        {/* Menu mobile */}
-        <div className="md:hidden">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button size="icon" variant="ghost" className="text-white">
-                <Menu className="h-6 w-6" />
+    <header className="sticky top-0 z-30 bg-white border-b shadow-sm">
+      <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+        <div className="flex items-center gap-4">
+          {backUrl && (
+            <Link to={backUrl}>
+              <Button size="icon" variant="ghost">
+                <ChevronLeft className="h-5 w-5" />
+                <span className="sr-only">Back</span>
               </Button>
-            </SheetTrigger>
-            <SheetContent>
-              <div className="flex flex-col gap-4 mt-8">
-                <Button 
-                  variant="ghost" 
-                  className="flex justify-start" 
-                  onClick={() => handleNavigation("/")}>
-                  <Home className="h-5 w-5 mr-2" />
-                  Início
-                </Button>
-              </div>
-            </SheetContent>
-          </Sheet>
+            </Link>
+          )}
+          <h1 className="text-xl font-semibold md:text-2xl">{title}</h1>
+        </div>
+        <div className="flex items-center gap-2">
+          {children}
+          {user && <UserProfileMenu />}
         </div>
       </div>
     </header>

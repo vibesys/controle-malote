@@ -4,48 +4,66 @@ import { Button } from "@/components/ui/button";
 import { PageContainer } from "@/components/layout/page-container";
 import { Building, Mail, Building2, Inbox, MailPlus, Bike } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Index() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   
-  const menuItems = [
-    {
-      title: "Malotes Recebidos",
-      icon: <Inbox className="h-12 w-12" />,
-      path: "/malotes/tipo",
-      color: "bg-blue-dark"
-    },
-    {
-      title: "Cadastrar Empresa",
-      icon: <Building className="h-12 w-12" />,
-      path: "/empresas",
-      color: "bg-blue-medium"
-    },
-    {
-      title: "Cadastrar Departamento",
-      icon: <Building2 className="h-12 w-12" />,
-      path: "/departamentos",
-      color: "bg-blue-light"
-    },
-    {
-      title: "Cadastrar Destinatário",
-      icon: <Mail className="h-12 w-12" />,
-      path: "/destinatarios",
-      color: "bg-blue-medium"
-    },
-    {
-      title: "Cadastrar Como Chegou",
-      icon: <Bike className="h-12 w-12" />,
-      path: "/como-chegou",
-      color: "bg-blue-light"
-    },
-    {
-      title: "Novo Malote Recebido",
-      icon: <MailPlus className="h-12 w-12" />,
-      path: "/malotes/novo/tipo",
-      color: "bg-blue-dark"
-    }
-  ];
+  const isAdmin = user?.perfil === "Administrador";
+  
+  const getMenuItemsForProfile = () => {
+    const allMenuItems = [
+      {
+        title: "Malotes Recebidos",
+        icon: <Inbox className="h-12 w-12" />,
+        path: "/malotes/tipo",
+        color: "bg-blue-dark",
+        profiles: ["Administrador", "dp-rh", "recepcao", "triagem"]
+      },
+      {
+        title: "Cadastrar Empresa",
+        icon: <Building className="h-12 w-12" />,
+        path: "/empresas",
+        color: "bg-blue-medium",
+        profiles: ["Administrador"]
+      },
+      {
+        title: "Cadastrar Departamento",
+        icon: <Building2 className="h-12 w-12" />,
+        path: "/departamentos",
+        color: "bg-blue-light",
+        profiles: ["Administrador"]
+      },
+      {
+        title: "Cadastrar Destinatário",
+        icon: <Mail className="h-12 w-12" />,
+        path: "/destinatarios",
+        color: "bg-blue-medium",
+        profiles: ["Administrador"]
+      },
+      {
+        title: "Cadastrar Como Chegou",
+        icon: <Bike className="h-12 w-12" />,
+        path: "/como-chegou",
+        color: "bg-blue-light",
+        profiles: ["Administrador"]
+      },
+      {
+        title: "Novo Malote Recebido",
+        icon: <MailPlus className="h-12 w-12" />,
+        path: "/malotes/novo/tipo",
+        color: "bg-blue-dark",
+        profiles: ["Administrador", "dp-rh", "recepcao", "triagem"]
+      }
+    ];
+
+    if (!user) return [];
+    
+    return allMenuItems.filter(item => item.profiles.includes(user.perfil));
+  };
+
+  const menuItems = getMenuItemsForProfile();
 
   const handleNavigation = (path: string) => {
     console.log("Navigating to:", path);
@@ -55,7 +73,7 @@ export default function Index() {
   return (
     <PageContainer title="Painel de Controle">
       <div className="relative">
-        <p className="text-xs text-gray-500 mb-4">Quantidade de licenças: 3</p>
+        {isAdmin && <p className="text-xs text-gray-500 mb-4">Quantidade de licenças: 3</p>}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {menuItems.map((item) => (
             <Card 
