@@ -1,9 +1,9 @@
+
 import { useNavigate, useLocation } from "react-router-dom";
 import { PageContainer } from "@/components/layout/page-container";
 import { MalotesContent } from "@/components/malotes/MalotesContent";
 import { useMalotes } from "@/hooks/useMalotes";
 import { useState, useEffect } from "react";
-import { UserRole } from "@/context/auth";
 
 interface TitulosTipos {
   [key: string]: string;

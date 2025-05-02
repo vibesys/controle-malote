@@ -2,15 +2,14 @@
 import { useState, useEffect } from "react";
 import { Malote } from "@/types/malote";
 import { showSuccessToast } from "@/components/ui/toast-custom";
+import { currentUser } from "@/types/user";
 import { parseBrazilianDate } from "@/utils/maloteUtils";
-import { malotesDB, logsDB } from "@/utils/supabase";
-import { useAuth } from "@/context/auth";
+import { malotesDB, logsDB } from "@/utils/supabaseDB";
 
 export function useMalotes(tipoTabela: string = "recepcao") {
   const [malotes, setMalotes] = useState<Malote[]>([]);
   const [selectedMalotes, setSelectedMalotes] = useState<Malote[]>([]);
   const [loading, setLoading] = useState(true);
-  const { userData } = useAuth();
 
   useEffect(() => {
     console.log("useMalotes initialized with tipo_tabela:", tipoTabela);
@@ -45,7 +44,7 @@ export function useMalotes(tipoTabela: string = "recepcao") {
       
       await logsDB.create({
         acao: "Editou malote",
-        usuario_email: userData?.username || "usuário desconhecido",
+        usuario_email: currentUser.username,
         data_hora: new Date().toISOString(),
         detalhes: `Malote: ${processedMalote.documento_recebido}`
       });
@@ -65,7 +64,7 @@ export function useMalotes(tipoTabela: string = "recepcao") {
       
       await logsDB.create({
         acao: "Excluiu malote",
-        usuario_email: userData?.username || "usuário desconhecido",
+        usuario_email: currentUser.username,
         data_hora: new Date().toISOString(),
         detalhes: `Malote: ${malote.documento_recebido}`
       });
@@ -87,7 +86,7 @@ export function useMalotes(tipoTabela: string = "recepcao") {
       
       await logsDB.create({
         acao: "Excluiu múltiplos malotes",
-        usuario_email: userData?.username || "usuário desconhecido",
+        usuario_email: currentUser.username,
         data_hora: new Date().toISOString(),
         detalhes: `Quantidade: ${selectedItems.length}`
       });
