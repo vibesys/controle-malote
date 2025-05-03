@@ -13,5 +13,6 @@ export const currentUser = {
   id: "1",
   username: "admin@aguiadehaiacourier.com",
   name: "Administrador",
-  isAdmin: true
+  isAdmin: true,
+  perfil: "Administrador"
 };

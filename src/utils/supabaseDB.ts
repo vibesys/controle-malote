@@ -42,6 +42,15 @@ export const authAPI = {
   }
 };
 
+// Database operations for each table with admin headers for bypassing RLS
+const getAdminHeaders = () => {
+  return {
+    headers: {
+      'x-admin-bypass-rls': 'true'
+    }
+  };
+};
+
 // Database operations for each table
 export const empresasDB = {
   getAll: async () => {

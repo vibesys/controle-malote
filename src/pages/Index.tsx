@@ -4,48 +4,77 @@ import { Button } from "@/components/ui/button";
 import { PageContainer } from "@/components/layout/page-container";
 import { Building, Mail, Building2, Inbox, MailPlus, Bike } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Index() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   
-  const menuItems = [
+  // Filter menu items based on user profile
+  const isAdmin = user?.isAdmin || user?.perfil === "Administrador";
+  const userProfile = user?.perfil?.toLowerCase();
+
+  // Define base menu items
+  const baseMenuItems = [
     {
       title: "Malotes Recebidos",
       icon: <Inbox className="h-12 w-12" />,
       path: "/malotes/tipo",
-      color: "bg-blue-dark"
-    },
-    {
-      title: "Cadastrar Empresa",
-      icon: <Building className="h-12 w-12" />,
-      path: "/empresas",
-      color: "bg-blue-medium"
-    },
-    {
-      title: "Cadastrar Departamento",
-      icon: <Building2 className="h-12 w-12" />,
-      path: "/departamentos",
-      color: "bg-blue-light"
-    },
-    {
-      title: "Cadastrar Destinatário",
-      icon: <Mail className="h-12 w-12" />,
-      path: "/destinatarios",
-      color: "bg-blue-medium"
-    },
-    {
-      title: "Cadastrar Como Chegou",
-      icon: <Bike className="h-12 w-12" />,
-      path: "/como-chegou",
-      color: "bg-blue-light"
+      color: "bg-blue-dark",
+      profiles: ["recepcao", "triagem", "dp-rh"]
     },
     {
       title: "Novo Malote Recebido",
       icon: <MailPlus className="h-12 w-12" />,
       path: "/malotes/novo/tipo",
-      color: "bg-blue-dark"
+      color: "bg-blue-dark",
+      profiles: ["recepcao", "triagem", "dp-rh"]
     }
   ];
+
+  // Define admin-only menu items
+  const adminMenuItems = [
+    {
+      title: "Cadastrar Empresa",
+      icon: <Building className="h-12 w-12" />,
+      path: "/empresas",
+      color: "bg-blue-medium",
+      profiles: ["administrador"]
+    },
+    {
+      title: "Cadastrar Departamento",
+      icon: <Building2 className="h-12 w-12" />,
+      path: "/departamentos",
+      color: "bg-blue-light",
+      profiles: ["administrador"]
+    },
+    {
+      title: "Cadastrar Destinatário",
+      icon: <Mail className="h-12 w-12" />,
+      path: "/destinatarios",
+      color: "bg-blue-medium",
+      profiles: ["administrador"]
+    },
+    {
+      title: "Cadastrar Como Chegou",
+      icon: <Bike className="h-12 w-12" />,
+      path: "/como-chegou",
+      color: "bg-blue-light",
+      profiles: ["administrador"]
+    }
+  ];
+
+  // Combine menu items based on user role
+  let menuItems = [...baseMenuItems];
+  
+  if (isAdmin) {
+    menuItems = [...menuItems, ...adminMenuItems];
+  } else if (userProfile) {
+    // Filter menu items that match the user's profile
+    menuItems = menuItems.filter(item => 
+      item.profiles.includes(userProfile) || item.profiles.includes("all")
+    );
+  }
 
   const handleNavigation = (path: string) => {
     console.log("Navigating to:", path);

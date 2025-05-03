@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageContainer } from "@/components/layout/page-container";
 import { Inbox } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface OpcaoTipoProps {
   titulo: string;
@@ -37,30 +38,42 @@ interface SelecionarTipoMaloteProps {
 }
 
 export default function SelecionarTipoMalote({ modo }: SelecionarTipoMaloteProps) {
+  const { user } = useAuth();
   const titulo = modo === "visualizar" 
     ? "Selecione o tipo de malote para visualizar" 
     : "Selecione o tipo de malote para cadastrar";
   
   const destino = modo === "visualizar" ? "/malotes" : "/malotes/novo";
   
+  // Determine which options to show based on user profile
+  const shouldShowRecepcao = user?.isAdmin || user?.perfil === "recepcao" || user?.perfil === "Recepcao";
+  const shouldShowTriagem = user?.isAdmin || user?.perfil === "triagem" || user?.perfil === "Triagem";
+  const shouldShowDpRh = user?.isAdmin || user?.perfil === "dp-rh" || user?.perfil === "DP-RH";
+
   return (
     <PageContainer title={titulo} backUrl="/">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <OpcaoTipo 
-          titulo="Recepção" 
-          tipo="recepcao" 
-          destino={destino}
-        />
-        <OpcaoTipo 
-          titulo="Triagem" 
-          tipo="triagem" 
-          destino={destino}
-        />
-        <OpcaoTipo 
-          titulo="DP-RH" 
-          tipo="dp-rh" 
-          destino={destino}
-        />
+        {shouldShowRecepcao && (
+          <OpcaoTipo 
+            titulo="Recepção" 
+            tipo="recepcao" 
+            destino={destino}
+          />
+        )}
+        {shouldShowTriagem && (
+          <OpcaoTipo 
+            titulo="Triagem" 
+            tipo="triagem" 
+            destino={destino}
+          />
+        )}
+        {shouldShowDpRh && (
+          <OpcaoTipo 
+            titulo="DP-RH" 
+            tipo="dp-rh" 
+            destino={destino}
+          />
+        )}
       </div>
     </PageContainer>
   );
