@@ -11,7 +11,10 @@ export const authAPI = {
         .rpc('authenticate_user', { p_email: email, p_senha: password });
       
       if (error) throw error;
-      return data as AuthResponse;
+      
+      // Explicitly cast data to AuthResponse to ensure type safety
+      const authResponse = data as unknown as AuthResponse;
+      return authResponse;
     } catch (error) {
       console.error("Login error:", error);
       return { success: false, message: 'Erro ao fazer login' };
@@ -28,7 +31,10 @@ export const authAPI = {
         });
       
       if (error) throw error;
-      return data as AuthResponse;
+      
+      // Explicitly cast data to AuthResponse to ensure type safety
+      const authResponse = data as unknown as AuthResponse;
+      return authResponse;
     } catch (error) {
       console.error("Password change error:", error);
       return { success: false, message: 'Erro ao alterar senha' };
