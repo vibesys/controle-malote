@@ -9,13 +9,235 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      authentication: {
+        Row: {
+          atualizado_em: string | null
+          criado_em: string | null
+          email: string
+          id: string
+          perfil: string
+          senha: string
+        }
+        Insert: {
+          atualizado_em?: string | null
+          criado_em?: string | null
+          email: string
+          id?: string
+          perfil: string
+          senha: string
+        }
+        Update: {
+          atualizado_em?: string | null
+          criado_em?: string | null
+          email?: string
+          id?: string
+          perfil?: string
+          senha?: string
+        }
+        Relationships: []
+      }
+      departamentos: {
+        Row: {
+          created_at: string | null
+          id: string
+          nome_departamento: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          nome_departamento: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          nome_departamento?: string
+        }
+        Relationships: []
+      }
+      destinatarios: {
+        Row: {
+          created_at: string | null
+          id: string
+          nome_destinatario: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          nome_destinatario: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          nome_destinatario?: string
+        }
+        Relationships: []
+      }
+      empresas: {
+        Row: {
+          created_at: string | null
+          id: string
+          razao_social: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          razao_social: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          razao_social?: string
+        }
+        Relationships: []
+      }
+      logs: {
+        Row: {
+          acao: string
+          created_at: string | null
+          data_hora: string
+          detalhes: string | null
+          id: string
+          usuario_email: string
+        }
+        Insert: {
+          acao: string
+          created_at?: string | null
+          data_hora: string
+          detalhes?: string | null
+          id?: string
+          usuario_email: string
+        }
+        Update: {
+          acao?: string
+          created_at?: string | null
+          data_hora?: string
+          detalhes?: string | null
+          id?: string
+          usuario_email?: string
+        }
+        Relationships: []
+      }
+      malotes: {
+        Row: {
+          como_chegou: string
+          created_at: string | null
+          data_cadastro: string
+          data_chegada: string
+          data_entrega: string
+          departamento_id: string | null
+          destinatario_id: string | null
+          documento_recebido: string
+          empresa_id: string | null
+          id: string
+          informar_outros: string | null
+          nome_departamento: string
+          nome_destinatario: string
+          pessoa_que_recebeu: string
+          pessoa_remetente: string
+          razao_social: string
+          tipo_tabela: string
+        }
+        Insert: {
+          como_chegou: string
+          created_at?: string | null
+          data_cadastro?: string
+          data_chegada: string
+          data_entrega: string
+          departamento_id?: string | null
+          destinatario_id?: string | null
+          documento_recebido: string
+          empresa_id?: string | null
+          id?: string
+          informar_outros?: string | null
+          nome_departamento: string
+          nome_destinatario: string
+          pessoa_que_recebeu: string
+          pessoa_remetente: string
+          razao_social: string
+          tipo_tabela: string
+        }
+        Update: {
+          como_chegou?: string
+          created_at?: string | null
+          data_cadastro?: string
+          data_chegada?: string
+          data_entrega?: string
+          departamento_id?: string | null
+          destinatario_id?: string | null
+          documento_recebido?: string
+          empresa_id?: string | null
+          id?: string
+          informar_outros?: string | null
+          nome_departamento?: string
+          nome_destinatario?: string
+          pessoa_que_recebeu?: string
+          pessoa_remetente?: string
+          razao_social?: string
+          tipo_tabela?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "malotes_departamento_id_fkey"
+            columns: ["departamento_id"]
+            isOneToOne: false
+            referencedRelation: "departamentos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "malotes_destinatario_id_fkey"
+            columns: ["destinatario_id"]
+            isOneToOne: false
+            referencedRelation: "destinatarios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "malotes_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "empresas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meios_transporte: {
+        Row: {
+          created_at: string | null
+          id: string
+          nome: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          nome: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          nome?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      authenticate_user: {
+        Args: { p_email: string; p_senha: string }
+        Returns: Json
+      }
+      is_admin: {
+        Args: { user_email: string }
+        Returns: boolean
+      }
+      update_password: {
+        Args: {
+          p_user_email: string
+          p_current_password: string
+          p_new_password: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never

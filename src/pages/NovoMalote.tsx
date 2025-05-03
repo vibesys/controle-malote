@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { z } from "zod";
@@ -36,7 +35,7 @@ import { cn } from "@/lib/utils";
 import { showSuccessToast } from "@/components/ui/toast-custom";
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
-import { currentUser } from "@/types/user";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   empresasDB, 
   departamentosDB, 
@@ -94,6 +93,7 @@ export default function NovoMalote() {
   const [departamentoNome, setDepartamentoNome] = useState("");
   const [destinatarioNome, setDestinatarioNome] = useState("");
   const [novoMeioTransporte, setNovoMeioTransporte] = useState("");
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchData();
@@ -141,7 +141,7 @@ export default function NovoMalote() {
         
         await logsDB.create({
           acao: "Criou empresa",
-          usuario_email: currentUser.username,
+          usuario_email: user?.username || "sistema",
           data_hora: new Date().toISOString(),
           detalhes: `Empresa: ${empresaNome}`
         });
@@ -163,7 +163,7 @@ export default function NovoMalote() {
         
         await logsDB.create({
           acao: "Criou departamento",
-          usuario_email: currentUser.username,
+          usuario_email: user?.username || "sistema",
           data_hora: new Date().toISOString(),
           detalhes: `Departamento: ${departamentoNome}`
         });
@@ -185,7 +185,7 @@ export default function NovoMalote() {
         
         await logsDB.create({
           acao: "Criou destinatário",
-          usuario_email: currentUser.username,
+          usuario_email: user?.username || "sistema",
           data_hora: new Date().toISOString(),
           detalhes: `Destinatário: ${destinatarioNome}`
         });
@@ -248,7 +248,7 @@ export default function NovoMalote() {
       
       await logsDB.create({
         acao: `Criou malote (${tipoTabela})`,
-        usuario_email: currentUser.username,
+        usuario_email: user?.username || "sistema",
         data_hora: new Date().toISOString(),
         detalhes: `Malote: ${values.documento_recebido}`
       });

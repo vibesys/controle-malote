@@ -1,7 +1,42 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { showSuccessToast } from "@/components/ui/toast-custom";
+import { showSuccessToast, showErrorToast } from "@/components/ui/toast-custom";
+import { AuthResponse, LoginCredentials, PasswordChangeData } from "@/types/auth";
 
+// Authentication functions
+export const authAPI = {
+  login: async ({ email, password }: LoginCredentials): Promise<AuthResponse> => {
+    try {
+      const { data, error } = await supabase
+        .rpc('authenticate_user', { p_email: email, p_senha: password });
+      
+      if (error) throw error;
+      return data as AuthResponse;
+    } catch (error) {
+      console.error("Login error:", error);
+      return { success: false, message: 'Erro ao fazer login' };
+    }
+  },
+
+  changePassword: async (userEmail: string, { currentPassword, newPassword }: PasswordChangeData): Promise<AuthResponse> => {
+    try {
+      const { data, error } = await supabase
+        .rpc('update_password', { 
+          p_user_email: userEmail, 
+          p_current_password: currentPassword, 
+          p_new_password: newPassword 
+        });
+      
+      if (error) throw error;
+      return data as AuthResponse;
+    } catch (error) {
+      console.error("Password change error:", error);
+      return { success: false, message: 'Erro ao alterar senha' };
+    }
+  }
+};
+
+// Database operations for each table
 export const empresasDB = {
   getAll: async () => {
     const { data, error } = await supabase

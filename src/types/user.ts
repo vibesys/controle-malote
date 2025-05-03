@@ -4,10 +4,11 @@ export interface User {
   username: string;
   name: string;
   isAdmin: boolean;
-  password?: string;
+  perfil?: string;
 }
 
-// Current user singleton for easy access across the app
+// This is kept for compatibility with existing code
+// but should be replaced with the useAuth hook in new components
 export const currentUser = {
   id: "1",
   username: "admin@aguiadehaiacourier.com",
