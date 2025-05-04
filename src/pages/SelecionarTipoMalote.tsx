@@ -45,29 +45,33 @@ export default function SelecionarTipoMalote({ modo }: SelecionarTipoMaloteProps
   
   const destino = modo === "visualizar" ? "/malotes" : "/malotes/novo";
   
-  // Determine which options to show based on user profile
-  const shouldShowRecepcao = user?.isAdmin || user?.perfil === "recepcao" || user?.perfil === "Recepcao";
-  const shouldShowTriagem = user?.isAdmin || user?.perfil === "triagem" || user?.perfil === "Triagem";
-  const shouldShowDpRh = user?.isAdmin || user?.perfil === "dp-rh" || user?.perfil === "DP-RH";
+  // Standardize user profile name handling
+  const isAdmin = user?.isAdmin || user?.perfil === "Administrador";
+  const userProfile = user?.perfil?.toLowerCase();
+
+  // Only show options based on user profile
+  const showRecepcao = isAdmin || userProfile === 'recepcao';
+  const showTriagem = isAdmin || userProfile === 'triagem';
+  const showDpRh = isAdmin || userProfile === 'dp-rh' || userProfile === 'dp_rh';
 
   return (
     <PageContainer title={titulo} backUrl="/">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {shouldShowRecepcao && (
+        {showRecepcao && (
           <OpcaoTipo 
             titulo="Recepção" 
             tipo="recepcao" 
             destino={destino}
           />
         )}
-        {shouldShowTriagem && (
+        {showTriagem && (
           <OpcaoTipo 
             titulo="Triagem" 
             tipo="triagem" 
             destino={destino}
           />
         )}
-        {shouldShowDpRh && (
+        {showDpRh && (
           <OpcaoTipo 
             titulo="DP-RH" 
             tipo="dp-rh" 

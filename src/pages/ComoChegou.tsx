@@ -1,10 +1,11 @@
+
 import { useState, useEffect } from "react";
 import { PageContainer } from "@/components/layout/page-container";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus } from "lucide-react";
-import { showSuccessToast } from "@/components/ui/toast-custom";
+import { showSuccessToast, showErrorToast } from "@/components/ui/toast-custom";
 import { meiosTransporteDB } from "@/utils/supabaseDB";
 import { MeioTransporte } from "@/utils/localStorage";
 
@@ -24,6 +25,7 @@ export default function ComoChegou() {
       setMeiosTransporte(data);
     } catch (error) {
       console.error('Erro ao carregar meios de transporte:', error);
+      showErrorToast('Não foi possível carregar os meios de transporte');
     } finally {
       setIsLoading(false);
     }
@@ -32,12 +34,19 @@ export default function ComoChegou() {
   const handleAdd = async () => {
     if (novoMeioTransporte.trim()) {
       try {
+        setIsLoading(true);
+        console.log("Adding new transport method:", novoMeioTransporte.trim());
+        
         await meiosTransporteDB.create({ nome: novoMeioTransporte.trim() });
         await fetchMeiosTransporte();
+        
         setNovoMeioTransporte("");
         showSuccessToast("Meio de transporte adicionado com sucesso!");
       } catch (error) {
         console.error('Erro ao adicionar meio de transporte:', error);
+        showErrorToast("Erro ao adicionar meio de transporte");
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -46,24 +55,40 @@ export default function ComoChegou() {
     <PageContainer title="Cadastro de Como Chegou">
       <Card className="shadow-md">
         <CardContent className="pt-6">
-          <div className="flex gap-4 mb-6">
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            handleAdd();
+          }} className="flex gap-4 mb-6">
             <Input
               placeholder="Digite um novo meio de transporte"
               value={novoMeioTransporte}
               onChange={(e) => setNovoMeioTransporte(e.target.value)}
               className="flex-1"
+              required
             />
             <Button 
-              onClick={handleAdd} 
+              type="submit" 
               className="bg-blue-medium hover:bg-blue-dark"
               disabled={isLoading}
             >
               <Plus className="h-5 w-5 mr-2" />
               Adicionar
             </Button>
-          </div>
+          </form>
 
           <div className="space-y-4">
+            {meiosTransporte.length === 0 && !isLoading && (
+              <div className="p-4 text-center text-gray-500">
+                Nenhum meio de transporte cadastrado
+              </div>
+            )}
+            
+            {isLoading && (
+              <div className="p-4 text-center text-gray-500">
+                Carregando...
+              </div>
+            )}
+            
             {meiosTransporte.map((meio) => (
               <div key={meio.id} className="p-3 bg-gray-50 rounded-md">
                 <span>{meio.nome}</span>

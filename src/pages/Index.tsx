@@ -10,75 +10,115 @@ export default function Index() {
   const navigate = useNavigate();
   const { user } = useAuth();
   
-  // Filter menu items based on user profile
+  // Define user profile for access control
   const isAdmin = user?.isAdmin || user?.perfil === "Administrador";
   const userProfile = user?.perfil?.toLowerCase();
 
-  // Define base menu items
-  const baseMenuItems = [
-    {
-      title: "Malotes Recebidos",
-      icon: <Inbox className="h-12 w-12" />,
-      path: "/malotes/tipo",
-      color: "bg-blue-dark",
-      profiles: ["recepcao", "triagem", "dp-rh"]
-    },
-    {
-      title: "Novo Malote Recebido",
-      icon: <MailPlus className="h-12 w-12" />,
-      path: "/malotes/novo/tipo",
-      color: "bg-blue-dark",
-      profiles: ["recepcao", "triagem", "dp-rh"]
-    }
-  ];
+  // Define menu items by profile type
+  const menuItemsByProfile = {
+    recepcao: [
+      {
+        title: "Malotes Recebidos",
+        icon: <Inbox className="h-12 w-12" />,
+        path: "/malotes/tipo",
+        color: "bg-blue-dark",
+        type: "recepcao"
+      },
+      {
+        title: "Novo Malote Recebido",
+        icon: <MailPlus className="h-12 w-12" />,
+        path: "/malotes/novo/tipo",
+        color: "bg-blue-dark",
+        type: "recepcao"
+      }
+    ],
+    triagem: [
+      {
+        title: "Malotes Recebidos",
+        icon: <Inbox className="h-12 w-12" />,
+        path: "/malotes/tipo",
+        color: "bg-blue-dark",
+        type: "triagem"
+      },
+      {
+        title: "Novo Malote Recebido",
+        icon: <MailPlus className="h-12 w-12" />,
+        path: "/malotes/novo/tipo",
+        color: "bg-blue-dark",
+        type: "triagem"
+      }
+    ],
+    "dp-rh": [
+      {
+        title: "Malotes Recebidos",
+        icon: <Inbox className="h-12 w-12" />,
+        path: "/malotes/tipo",
+        color: "bg-blue-dark",
+        type: "dp-rh"
+      },
+      {
+        title: "Novo Malote Recebido",
+        icon: <MailPlus className="h-12 w-12" />,
+        path: "/malotes/novo/tipo",
+        color: "bg-blue-dark",
+        type: "dp-rh"
+      }
+    ],
+    administrador: [
+      {
+        title: "Cadastrar Empresa",
+        icon: <Building className="h-12 w-12" />,
+        path: "/empresas",
+        color: "bg-blue-medium",
+        type: "admin"
+      },
+      {
+        title: "Cadastrar Departamento",
+        icon: <Building2 className="h-12 w-12" />,
+        path: "/departamentos",
+        color: "bg-blue-light",
+        type: "admin"
+      },
+      {
+        title: "Cadastrar Destinatário",
+        icon: <Mail className="h-12 w-12" />,
+        path: "/destinatarios",
+        color: "bg-blue-medium",
+        type: "admin"
+      },
+      {
+        title: "Cadastrar Como Chegou",
+        icon: <Bike className="h-12 w-12" />,
+        path: "/como-chegou",
+        color: "bg-blue-light",
+        type: "admin"
+      }
+    ]
+  };
 
-  // Define admin-only menu items
-  const adminMenuItems = [
-    {
-      title: "Cadastrar Empresa",
-      icon: <Building className="h-12 w-12" />,
-      path: "/empresas",
-      color: "bg-blue-medium",
-      profiles: ["administrador"]
-    },
-    {
-      title: "Cadastrar Departamento",
-      icon: <Building2 className="h-12 w-12" />,
-      path: "/departamentos",
-      color: "bg-blue-light",
-      profiles: ["administrador"]
-    },
-    {
-      title: "Cadastrar Destinatário",
-      icon: <Mail className="h-12 w-12" />,
-      path: "/destinatarios",
-      color: "bg-blue-medium",
-      profiles: ["administrador"]
-    },
-    {
-      title: "Cadastrar Como Chegou",
-      icon: <Bike className="h-12 w-12" />,
-      path: "/como-chegou",
-      color: "bg-blue-light",
-      profiles: ["administrador"]
-    }
-  ];
-
-  // Combine menu items based on user role
-  let menuItems = [...baseMenuItems];
+  // Get menu items based on user profile
+  let menuItems = [];
   
   if (isAdmin) {
-    menuItems = [...menuItems, ...adminMenuItems];
+    // Admins can access all menu items
+    menuItems = [
+      ...menuItemsByProfile.recepcao,
+      ...menuItemsByProfile.triagem,
+      ...menuItemsByProfile["dp-rh"],
+      ...menuItemsByProfile.administrador
+    ];
   } else if (userProfile) {
-    // Filter menu items that match the user's profile
-    menuItems = menuItems.filter(item => 
-      item.profiles.includes(userProfile) || item.profiles.includes("all")
-    );
+    // Regular users can only access their profile's menu items
+    menuItems = menuItemsByProfile[userProfile as keyof typeof menuItemsByProfile] || [];
   }
 
-  const handleNavigation = (path: string) => {
-    console.log("Navigating to:", path);
-    navigate(path);
+  const handleNavigation = (path: string, type?: string) => {
+    console.log("Navigating to:", path, "Type:", type);
+    if (type) {
+      navigate(`${path}?tipo=${type}`);
+    } else {
+      navigate(path);
+    }
   };
 
   return (
@@ -86,9 +126,9 @@ export default function Index() {
       <div className="relative">
         <p className="text-xs text-gray-500 mb-4">Quantidade de licenças: 3</p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {menuItems.map((item) => (
+          {menuItems.map((item, index) => (
             <Card 
-              key={item.path} 
+              key={`${item.path}-${index}`}
               className="overflow-hidden transition-all duration-300 shadow-md hover:shadow-lg"
             >
               <div 
@@ -100,7 +140,7 @@ export default function Index() {
                 <h3 className="text-lg font-medium text-center mb-4">{item.title}</h3>
                 <Button 
                   className="w-full bg-blue-medium hover:bg-blue-dark"
-                  onClick={() => handleNavigation(item.path)}
+                  onClick={() => handleNavigation(item.path, item.type)}
                 >
                   Acessar
                 </Button>
