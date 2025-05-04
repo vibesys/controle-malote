@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -15,9 +16,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { showSuccessToast, showConfirmDialog } from "@/components/ui/toast-custom";
+import { showSuccessToast, showErrorToast, showConfirmDialog } from "@/components/ui/toast-custom";
 import { Trash2 } from "lucide-react";
-import { currentUser } from "@/types/user";
+import { useAuth } from "@/contexts/AuthContext";
 import { destinatariosDB, logsDB } from "@/utils/supabaseDB";
 
 // Schema de validação
@@ -28,6 +29,7 @@ const formSchema = z.object({
 export default function Destinatarios() {
   const [destinatarios, setDestinatarios] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
   
   useEffect(() => {
     fetchDestinatarios();
@@ -40,6 +42,7 @@ export default function Destinatarios() {
       setDestinatarios(data);
     } catch (error) {
       console.error('Erro ao carregar destinatários:', error);
+      showErrorToast("Erro ao carregar destinatários");
     } finally {
       setIsLoading(false);
     }
@@ -56,11 +59,12 @@ export default function Destinatarios() {
     setIsLoading(true);
     
     try {
+      console.log("Cadastrando novo destinatário:", values);
       await destinatariosDB.create({ nome_destinatario: values.nome_destinatario });
       
       await logsDB.create({
         acao: "Criou destinatário",
-        usuario_email: currentUser.username,
+        usuario_email: user?.username || "sistema",
         data_hora: new Date().toISOString(),
         detalhes: `Destinatário: ${values.nome_destinatario}`
       });
@@ -70,6 +74,7 @@ export default function Destinatarios() {
       form.reset();
     } catch (error) {
       console.error('Erro ao cadastrar destinatário:', error);
+      showErrorToast("Erro ao cadastrar destinatário");
     } finally {
       setIsLoading(false);
     }
@@ -84,7 +89,7 @@ export default function Destinatarios() {
           
           await logsDB.create({
             acao: "Excluiu destinatário",
-            usuario_email: currentUser.username,
+            usuario_email: user?.username || "sistema",
             data_hora: new Date().toISOString(),
             detalhes: `Destinatário: ${destinatario.nome_destinatario}`
           });
@@ -93,6 +98,7 @@ export default function Destinatarios() {
           showSuccessToast("Destinatário excluído com sucesso!");
         } catch (error) {
           console.error('Erro ao excluir destinatário:', error);
+          showErrorToast("Erro ao excluir destinatário");
         }
       }
     );

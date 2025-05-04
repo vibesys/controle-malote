@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, Trash2 } from "lucide-react";
-import { showSuccessToast, showConfirmDialog } from "@/components/ui/toast-custom";
+import { showSuccessToast, showErrorToast, showConfirmDialog } from "@/components/ui/toast-custom";
 import { meiosTransporteDB, logsDB } from "@/utils/supabaseDB";
 import { MeioTransporte } from "@/utils/localStorage";
 import { useAuth } from "@/contexts/AuthContext";
@@ -27,6 +27,7 @@ export default function ComoChegou() {
       setMeiosTransporte(data);
     } catch (error) {
       console.error('Erro ao carregar meios de transporte:', error);
+      showErrorToast("Erro ao carregar meios de transporte");
     } finally {
       setIsLoading(false);
     }
@@ -36,6 +37,7 @@ export default function ComoChegou() {
     if (novoMeioTransporte.trim()) {
       try {
         setIsLoading(true);
+        console.log("Cadastrando novo meio de transporte:", novoMeioTransporte);
         await meiosTransporteDB.create({ nome: novoMeioTransporte.trim() });
         
         await logsDB.create({
@@ -50,6 +52,7 @@ export default function ComoChegou() {
         showSuccessToast("Meio de transporte adicionado com sucesso!");
       } catch (error) {
         console.error('Erro ao adicionar meio de transporte:', error);
+        showErrorToast("Erro ao adicionar meio de transporte");
       } finally {
         setIsLoading(false);
       }
@@ -75,6 +78,7 @@ export default function ComoChegou() {
           showSuccessToast("Meio de transporte excluído com sucesso!");
         } catch (error) {
           console.error('Erro ao excluir meio de transporte:', error);
+          showErrorToast("Erro ao excluir meio de transporte");
         } finally {
           setIsLoading(false);
         }
@@ -92,6 +96,12 @@ export default function ComoChegou() {
               value={novoMeioTransporte}
               onChange={(e) => setNovoMeioTransporte(e.target.value)}
               className="flex-1"
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleAdd();
+                }
+              }}
             />
             <Button 
               onClick={handleAdd} 

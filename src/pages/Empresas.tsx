@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -15,9 +16,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { showSuccessToast, showConfirmDialog } from "@/components/ui/toast-custom";
+import { showSuccessToast, showErrorToast, showConfirmDialog } from "@/components/ui/toast-custom";
 import { Trash2 } from "lucide-react";
-import { currentUser } from "@/types/user";
+import { useAuth } from "@/contexts/AuthContext";
 import { logsDB } from "@/utils/supabaseDB";
 import { empresasDB } from "@/utils/supabaseDB";
 
@@ -29,6 +30,7 @@ const formSchema = z.object({
 export default function Empresas() {
   const [empresas, setEmpresas] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
   
   // Carrega dados do localStorage
   useEffect(() => {
@@ -42,6 +44,7 @@ export default function Empresas() {
       setEmpresas(data);
     } catch (error) {
       console.error('Erro ao carregar empresas:', error);
+      showErrorToast("Erro ao carregar empresas");
     } finally {
       setIsLoading(false);
     }
@@ -58,11 +61,13 @@ export default function Empresas() {
     setIsLoading(true);
     
     try {
-      await empresasDB.create({ razao_social: values.razao_social });
+      console.log("Cadastrando nova empresa:", values);
+      const novaEmpresa = await empresasDB.create({ razao_social: values.razao_social });
+      console.log("Empresa cadastrada:", novaEmpresa);
       
       await logsDB.create({
         acao: "Criou empresa",
-        usuario_email: currentUser.username,
+        usuario_email: user?.username || "sistema",
         data_hora: new Date().toISOString(),
         detalhes: `Empresa: ${values.razao_social}`
       });
@@ -72,6 +77,7 @@ export default function Empresas() {
       form.reset();
     } catch (error) {
       console.error('Erro ao cadastrar empresa:', error);
+      showErrorToast("Erro ao cadastrar empresa");
     } finally {
       setIsLoading(false);
     }
@@ -86,7 +92,7 @@ export default function Empresas() {
           
           await logsDB.create({
             acao: "Excluiu empresa",
-            usuario_email: currentUser.username,
+            usuario_email: user?.username || "sistema",
             data_hora: new Date().toISOString(),
             detalhes: `Empresa: ${empresa.razao_social}`
           });
@@ -95,6 +101,7 @@ export default function Empresas() {
           showSuccessToast("Empresa excluída com sucesso!");
         } catch (error) {
           console.error('Erro ao excluir empresa:', error);
+          showErrorToast("Erro ao excluir empresa");
         }
       }
     );

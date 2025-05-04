@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -15,9 +16,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { showSuccessToast, showConfirmDialog } from "@/components/ui/toast-custom";
+import { showSuccessToast, showErrorToast, showConfirmDialog } from "@/components/ui/toast-custom";
 import { Trash2 } from "lucide-react";
-import { currentUser } from "@/types/user";
+import { useAuth } from "@/contexts/AuthContext";
 import { departamentosDB, logsDB } from "@/utils/supabaseDB";
 
 // Schema de validação
@@ -28,6 +29,7 @@ const formSchema = z.object({
 export default function Departamentos() {
   const [departamentos, setDepartamentos] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
   
   useEffect(() => {
     fetchDepartamentos();
@@ -40,6 +42,7 @@ export default function Departamentos() {
       setDepartamentos(data);
     } catch (error) {
       console.error('Erro ao carregar departamentos:', error);
+      showErrorToast("Erro ao carregar departamentos");
     } finally {
       setIsLoading(false);
     }
@@ -56,11 +59,12 @@ export default function Departamentos() {
     setIsLoading(true);
     
     try {
+      console.log("Cadastrando novo departamento:", values);
       await departamentosDB.create({ nome_departamento: values.nome_departamento });
       
       await logsDB.create({
         acao: "Criou departamento",
-        usuario_email: currentUser.username,
+        usuario_email: user?.username || "sistema",
         data_hora: new Date().toISOString(),
         detalhes: `Departamento: ${values.nome_departamento}`
       });
@@ -70,6 +74,7 @@ export default function Departamentos() {
       form.reset();
     } catch (error) {
       console.error('Erro ao cadastrar departamento:', error);
+      showErrorToast("Erro ao cadastrar departamento");
     } finally {
       setIsLoading(false);
     }
@@ -84,7 +89,7 @@ export default function Departamentos() {
           
           await logsDB.create({
             acao: "Excluiu departamento",
-            usuario_email: currentUser.username,
+            usuario_email: user?.username || "sistema",
             data_hora: new Date().toISOString(),
             detalhes: `Departamento: ${departamento.nome_departamento}`
           });
@@ -93,6 +98,7 @@ export default function Departamentos() {
           showSuccessToast("Departamento excluído com sucesso!");
         } catch (error) {
           console.error('Erro ao excluir departamento:', error);
+          showErrorToast("Erro ao excluir departamento");
         }
       }
     );
