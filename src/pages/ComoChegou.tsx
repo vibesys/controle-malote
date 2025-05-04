@@ -1,17 +1,20 @@
+
 import { useState, useEffect } from "react";
 import { PageContainer } from "@/components/layout/page-container";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Plus } from "lucide-react";
-import { showSuccessToast } from "@/components/ui/toast-custom";
-import { meiosTransporteDB } from "@/utils/supabaseDB";
+import { Plus, Trash2 } from "lucide-react";
+import { showSuccessToast, showConfirmDialog } from "@/components/ui/toast-custom";
+import { meiosTransporteDB, logsDB } from "@/utils/supabaseDB";
 import { MeioTransporte } from "@/utils/localStorage";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function ComoChegou() {
   const [novoMeioTransporte, setNovoMeioTransporte] = useState("");
   const [meiosTransporte, setMeiosTransporte] = useState<MeioTransporte[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchMeiosTransporte();
@@ -32,14 +35,51 @@ export default function ComoChegou() {
   const handleAdd = async () => {
     if (novoMeioTransporte.trim()) {
       try {
+        setIsLoading(true);
         await meiosTransporteDB.create({ nome: novoMeioTransporte.trim() });
+        
+        await logsDB.create({
+          acao: "Criou meio de transporte",
+          usuario_email: user?.username || "sistema",
+          data_hora: new Date().toISOString(),
+          detalhes: `Meio de transporte: ${novoMeioTransporte.trim()}`
+        });
+        
         await fetchMeiosTransporte();
         setNovoMeioTransporte("");
         showSuccessToast("Meio de transporte adicionado com sucesso!");
       } catch (error) {
         console.error('Erro ao adicionar meio de transporte:', error);
+      } finally {
+        setIsLoading(false);
       }
     }
+  };
+  
+  const handleDelete = async (meio: MeioTransporte) => {
+    showConfirmDialog(
+      `Deseja excluir o meio de transporte ${meio.nome}?`,
+      async () => {
+        try {
+          setIsLoading(true);
+          await meiosTransporteDB.remove(meio.id);
+          
+          await logsDB.create({
+            acao: "Excluiu meio de transporte",
+            usuario_email: user?.username || "sistema",
+            data_hora: new Date().toISOString(),
+            detalhes: `Meio de transporte: ${meio.nome}`
+          });
+          
+          await fetchMeiosTransporte();
+          showSuccessToast("Meio de transporte excluído com sucesso!");
+        } catch (error) {
+          console.error('Erro ao excluir meio de transporte:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    );
   };
   
   return (
@@ -65,10 +105,33 @@ export default function ComoChegou() {
 
           <div className="space-y-4">
             {meiosTransporte.map((meio) => (
-              <div key={meio.id} className="p-3 bg-gray-50 rounded-md">
+              <div 
+                key={meio.id} 
+                className="p-3 bg-gray-50 rounded-md flex justify-between items-center"
+              >
                 <span>{meio.nome}</span>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => handleDelete(meio)}
+                  className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                >
+                  <Trash2 className="h-5 w-5" />
+                </Button>
               </div>
             ))}
+            
+            {meiosTransporte.length === 0 && !isLoading && (
+              <div className="text-center py-4 text-gray-500">
+                Nenhum meio de transporte cadastrado
+              </div>
+            )}
+            
+            {isLoading && (
+              <div className="text-center py-4 text-gray-500">
+                Carregando...
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
