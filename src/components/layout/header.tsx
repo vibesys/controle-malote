@@ -1,4 +1,3 @@
-
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Home, Menu, User, LogOut, Key } from "lucide-react";
@@ -7,7 +6,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { ChangePasswordDialog } from "@/components/auth/ChangePasswordDialog";
-
 export function Header() {
   const navigate = useNavigate();
   const {
@@ -15,16 +13,14 @@ export function Header() {
     logout
   } = useAuth();
   const [showPasswordDialog, setShowPasswordDialog] = useState(false);
-  
   const handleNavigation = (path: string) => {
     navigate(path, {
       replace: false
     });
   };
-  
   return <header className="bg-blue-dark text-white py-4 px-6 flex justify-between items-center shadow-md sticky top-0 z-10">
       <div className="flex items-center">
-        <h1 className="text-xl font-bold cursor-pointer" onClick={() => handleNavigation("/")}>VibeSys - Controle Malote </h1>
+        <h1 className="text-xl font-bold cursor-pointer" onClick={() => handleNavigation("/")}>VibeSys - Controle Malote </h1>
       </div>
       
       <div className="flex items-center gap-4">
@@ -40,7 +36,7 @@ export function Header() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="text-white hover:bg-blue-medium">
                     <User className="h-5 w-5 mr-2" />
-                    {user.name} ({user.perfil})
+                    {user.name}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">

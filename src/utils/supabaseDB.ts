@@ -76,10 +76,7 @@ export const empresasDB = {
       .insert(empresa)
       .select()
       .single();
-    if (error) {
-      console.error("Error creating empresa:", error);
-      throw error;
-    }
+    if (error) throw error;
     return data;
   },
   update: async (id: string, empresa: { razao_social: string }) => {
@@ -126,10 +123,7 @@ export const departamentosDB = {
       .insert(departamento)
       .select()
       .single();
-    if (error) {
-      console.error("Error creating departamento:", error);
-      throw error;
-    }
+    if (error) throw error;
     return data;
   },
   update: async (id: string, departamento: { nome_departamento: string }) => {
@@ -176,10 +170,7 @@ export const destinatariosDB = {
       .insert(destinatario)
       .select()
       .single();
-    if (error) {
-      console.error("Error creating destinatario:", error);
-      throw error;
-    }
+    if (error) throw error;
     return data;
   },
   update: async (id: string, destinatario: { nome_destinatario: string }) => {
@@ -226,10 +217,7 @@ export const meiosTransporteDB = {
       .insert(meioTransporte)
       .select()
       .single();
-    if (error) {
-      console.error("Error creating meio de transporte:", error);
-      throw error;
-    }
+    if (error) throw error;
     return data;
   },
   update: async (id: string, meioTransporte: { nome: string }) => {
