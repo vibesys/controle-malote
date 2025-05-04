@@ -19,8 +19,12 @@ export function RequireAuth({ children, allowedRoles = [] }: RequireAuthProps) {
     } else if (!loading && user && allowedRoles.length > 0) {
       // Check if the user has one of the allowed roles
       const userRole = user.perfil || (user.isAdmin ? 'Administrador' : '');
-      if (!allowedRoles.includes(userRole) && !user.isAdmin) {
-        // Admins can access any page
+      const userRoleLowerCase = userRole.toLowerCase();
+      const allowedRolesLowerCase = allowedRoles.map(role => role.toLowerCase());
+      
+      // Allow access if the user's role (case insensitive) is in the allowed roles list
+      // or if they are an admin
+      if (!allowedRolesLowerCase.includes(userRoleLowerCase) && !user.isAdmin) {
         navigate("/unauthorized");
       }
     }

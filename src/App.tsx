@@ -43,19 +43,19 @@ const App = () => {
               } />
               
               <Route path="/empresas" element={
-                <RequireAuth allowedRoles={["Administrador"]}>
+                <RequireAuth allowedRoles={["Administrador", "recepcao", "triagem", "dp-rh"]}>
                   <Empresas />
                 </RequireAuth>
               } />
               
               <Route path="/departamentos" element={
-                <RequireAuth allowedRoles={["Administrador"]}>
+                <RequireAuth allowedRoles={["Administrador", "recepcao", "triagem", "dp-rh"]}>
                   <Departamentos />
                 </RequireAuth>
               } />
               
               <Route path="/destinatarios" element={
-                <RequireAuth allowedRoles={["Administrador"]}>
+                <RequireAuth allowedRoles={["Administrador", "recepcao", "triagem", "dp-rh"]}>
                   <Destinatarios />
                 </RequireAuth>
               } />
@@ -85,7 +85,7 @@ const App = () => {
               } />
               
               <Route path="/como-chegou" element={
-                <RequireAuth allowedRoles={["Administrador"]}>
+                <RequireAuth allowedRoles={["Administrador", "recepcao", "triagem", "dp-rh"]}>
                   <ComoChegou />
                 </RequireAuth>
               } />

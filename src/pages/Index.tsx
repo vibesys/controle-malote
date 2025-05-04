@@ -13,6 +13,10 @@ export default function Index() {
   // Filter menu items based on user profile
   const isAdmin = user?.isAdmin || user?.perfil === "Administrador";
   const userProfile = user?.perfil?.toLowerCase();
+  
+  // Check if user has access to cadastro screens
+  const hasCadastroAccess = isAdmin || 
+    ["recepcao", "triagem", "dp-rh"].includes(userProfile || "");
 
   // Define base menu items
   const baseMenuItems = [
@@ -32,43 +36,43 @@ export default function Index() {
     }
   ];
 
-  // Define admin-only menu items
-  const adminMenuItems = [
+  // Define cadastro menu items - now available to more profiles
+  const cadastroMenuItems = [
     {
       title: "Cadastrar Empresa",
       icon: <Building className="h-12 w-12" />,
       path: "/empresas",
       color: "bg-blue-medium",
-      profiles: ["administrador"]
+      profiles: ["administrador", "recepcao", "triagem", "dp-rh"]
     },
     {
       title: "Cadastrar Departamento",
       icon: <Building2 className="h-12 w-12" />,
       path: "/departamentos",
       color: "bg-blue-light",
-      profiles: ["administrador"]
+      profiles: ["administrador", "recepcao", "triagem", "dp-rh"]
     },
     {
       title: "Cadastrar Destinatário",
       icon: <Mail className="h-12 w-12" />,
       path: "/destinatarios",
       color: "bg-blue-medium",
-      profiles: ["administrador"]
+      profiles: ["administrador", "recepcao", "triagem", "dp-rh"]
     },
     {
       title: "Cadastrar Como Chegou",
       icon: <Bike className="h-12 w-12" />,
       path: "/como-chegou",
       color: "bg-blue-light",
-      profiles: ["administrador"]
+      profiles: ["administrador", "recepcao", "triagem", "dp-rh"]
     }
   ];
 
   // Combine menu items based on user role
   let menuItems = [...baseMenuItems];
   
-  if (isAdmin) {
-    menuItems = [...menuItems, ...adminMenuItems];
+  if (hasCadastroAccess) {
+    menuItems = [...menuItems, ...cadastroMenuItems];
   } else if (userProfile) {
     // Filter menu items that match the user's profile
     menuItems = menuItems.filter(item => 

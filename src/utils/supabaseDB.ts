@@ -42,7 +42,7 @@ export const authAPI = {
   }
 };
 
-// Database operations for each table with admin headers for bypassing RLS
+// Admin headers for bypassing RLS
 const adminHeaders = {
   headers: {
     'x-admin-bypass-rls': 'true'
@@ -56,7 +56,7 @@ export const empresasDB = {
       .from('empresas')
       .select('*')
       .order('razao_social', { ascending: true })
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -66,7 +66,7 @@ export const empresasDB = {
       .select('*')
       .eq('id', id)
       .single()
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -76,7 +76,7 @@ export const empresasDB = {
       .insert(empresa)
       .select()
       .single()
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -87,7 +87,7 @@ export const empresasDB = {
       .eq('id', id)
       .select()
       .single()
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -96,7 +96,7 @@ export const empresasDB = {
       .from('empresas')
       .delete()
       .eq('id', id)
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return true;
   }
@@ -108,7 +108,7 @@ export const departamentosDB = {
       .from('departamentos')
       .select('*')
       .order('nome_departamento', { ascending: true })
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -118,7 +118,7 @@ export const departamentosDB = {
       .select('*')
       .eq('id', id)
       .single()
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -128,7 +128,7 @@ export const departamentosDB = {
       .insert(departamento)
       .select()
       .single()
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -139,7 +139,7 @@ export const departamentosDB = {
       .eq('id', id)
       .select()
       .single()
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -148,7 +148,7 @@ export const departamentosDB = {
       .from('departamentos')
       .delete()
       .eq('id', id)
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return true;
   }
@@ -160,7 +160,7 @@ export const destinatariosDB = {
       .from('destinatarios')
       .select('*')
       .order('nome_destinatario', { ascending: true })
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -170,7 +170,7 @@ export const destinatariosDB = {
       .select('*')
       .eq('id', id)
       .single()
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -180,7 +180,7 @@ export const destinatariosDB = {
       .insert(destinatario)
       .select()
       .single()
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -191,7 +191,7 @@ export const destinatariosDB = {
       .eq('id', id)
       .select()
       .single()
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -200,7 +200,7 @@ export const destinatariosDB = {
       .from('destinatarios')
       .delete()
       .eq('id', id)
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return true;
   }
@@ -212,7 +212,7 @@ export const meiosTransporteDB = {
       .from('meios_transporte')
       .select('*')
       .order('nome', { ascending: true })
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -222,7 +222,7 @@ export const meiosTransporteDB = {
       .select('*')
       .eq('id', id)
       .single()
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -232,7 +232,7 @@ export const meiosTransporteDB = {
       .insert(meioTransporte)
       .select()
       .single()
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -243,7 +243,7 @@ export const meiosTransporteDB = {
       .eq('id', id)
       .select()
       .single()
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -252,7 +252,7 @@ export const meiosTransporteDB = {
       .from('meios_transporte')
       .delete()
       .eq('id', id)
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return true;
   }
@@ -264,7 +264,7 @@ export const malotesDB = {
       .from('malotes')
       .select('*')
       .order('data_cadastro', { ascending: false })
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -274,7 +274,7 @@ export const malotesDB = {
       .select('*')
       .eq('tipo_tabela', tipo)
       .order('data_cadastro', { ascending: false })
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -301,7 +301,7 @@ export const malotesDB = {
       .insert(malote)
       .select()
       .single()
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -312,7 +312,7 @@ export const malotesDB = {
       .eq('id', id)
       .select()
       .single()
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -321,7 +321,7 @@ export const malotesDB = {
       .from('malotes')
       .delete()
       .eq('id', id)
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return true;
   },
@@ -330,7 +330,7 @@ export const malotesDB = {
       .from('malotes')
       .delete()
       .in('id', ids)
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return ids.length;
   }
@@ -343,7 +343,7 @@ export const logsDB = {
       .insert(log)
       .select()
       .single()
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   },
@@ -352,7 +352,7 @@ export const logsDB = {
       .from('logs')
       .select('*')
       .order('data_hora', { ascending: false })
-      .using(adminHeaders);
+      .headers(adminHeaders.headers);
     if (error) throw error;
     return data;
   }
