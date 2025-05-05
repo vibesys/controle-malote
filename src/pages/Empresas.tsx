@@ -43,7 +43,7 @@ export default function Empresas() {
       console.log("Fetching empresas...");
       const data = await empresasDB.getAll();
       console.log("Empresas loaded:", data);
-      setEmpresas(data);
+      setEmpresas(data || []);
     } catch (error) {
       console.error('Erro ao carregar empresas:', error);
       showErrorToast("Erro ao carregar empresas");

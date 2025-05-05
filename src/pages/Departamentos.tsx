@@ -38,8 +38,10 @@ export default function Departamentos() {
   const fetchDepartamentos = async () => {
     try {
       setIsLoading(true);
+      console.log("Fetching departamentos...");
       const data = await departamentosDB.getAll();
-      setDepartamentos(data);
+      console.log("Departamentos loaded:", data);
+      setDepartamentos(data || []);
     } catch (error) {
       console.error('Erro ao carregar departamentos:', error);
       showErrorToast("Erro ao carregar departamentos");
@@ -60,7 +62,8 @@ export default function Departamentos() {
     
     try {
       console.log("Cadastrando novo departamento:", values);
-      await departamentosDB.create({ nome_departamento: values.nome_departamento });
+      const novoDepartamento = await departamentosDB.create({ nome_departamento: values.nome_departamento });
+      console.log("Departamento cadastrado:", novoDepartamento);
       
       await logsDB.create({
         acao: "Criou departamento",

@@ -26,7 +26,7 @@ export default function ComoChegou() {
       console.log("Fetching meios de transporte...");
       const data = await meiosTransporteDB.getAll();
       console.log("Meios de transporte loaded:", data);
-      setMeiosTransporte(data);
+      setMeiosTransporte(data || []);
     } catch (error) {
       console.error('Erro ao carregar meios de transporte:', error);
       showErrorToast("Erro ao carregar meios de transporte");
@@ -40,7 +40,8 @@ export default function ComoChegou() {
       try {
         setIsLoading(true);
         console.log("Cadastrando novo meio de transporte:", novoMeioTransporte);
-        await meiosTransporteDB.create({ nome: novoMeioTransporte.trim() });
+        const novoMeio = await meiosTransporteDB.create({ nome: novoMeioTransporte.trim() });
+        console.log("Meio de transporte cadastrado:", novoMeio);
         
         await logsDB.create({
           acao: "Criou meio de transporte",

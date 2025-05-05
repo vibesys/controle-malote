@@ -38,8 +38,10 @@ export default function Destinatarios() {
   const fetchDestinatarios = async () => {
     try {
       setIsLoading(true);
+      console.log("Fetching destinatários...");
       const data = await destinatariosDB.getAll();
-      setDestinatarios(data);
+      console.log("Destinatários loaded:", data);
+      setDestinatarios(data || []);
     } catch (error) {
       console.error('Erro ao carregar destinatários:', error);
       showErrorToast("Erro ao carregar destinatários");
@@ -60,7 +62,8 @@ export default function Destinatarios() {
     
     try {
       console.log("Cadastrando novo destinatário:", values);
-      await destinatariosDB.create({ nome_destinatario: values.nome_destinatario });
+      const novoDestinatario = await destinatariosDB.create({ nome_destinatario: values.nome_destinatario });
+      console.log("Destinatário cadastrado:", novoDestinatario);
       
       await logsDB.create({
         acao: "Criou destinatário",
