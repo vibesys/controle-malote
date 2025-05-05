@@ -72,7 +72,8 @@ export default function Departamentos() {
         detalhes: `Departamento: ${values.nome_departamento}`
       });
       
-      await fetchDepartamentos();
+      // Add the new item directly to the state instead of fetching again
+      setDepartamentos(prevDeps => [...prevDeps, novoDepartamento]);
       showSuccessToast("Departamento cadastrado com sucesso!");
       form.reset();
     } catch (error) {
@@ -97,7 +98,8 @@ export default function Departamentos() {
             detalhes: `Departamento: ${departamento.nome_departamento}`
           });
           
-          await fetchDepartamentos();
+          // Update the state directly by filtering out the deleted item
+          setDepartamentos(prevDeps => prevDeps.filter(d => d.id !== departamento.id));
           showSuccessToast("Departamento excluído com sucesso!");
         } catch (error) {
           console.error('Erro ao excluir departamento:', error);

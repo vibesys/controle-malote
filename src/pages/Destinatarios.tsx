@@ -72,7 +72,8 @@ export default function Destinatarios() {
         detalhes: `Destinatário: ${values.nome_destinatario}`
       });
       
-      await fetchDestinatarios();
+      // Add the new item directly to the state instead of fetching again
+      setDestinatarios(prevDests => [...prevDests, novoDestinatario]);
       showSuccessToast("Destinatário cadastrado com sucesso!");
       form.reset();
     } catch (error) {
@@ -97,7 +98,8 @@ export default function Destinatarios() {
             detalhes: `Destinatário: ${destinatario.nome_destinatario}`
           });
           
-          await fetchDestinatarios();
+          // Update the state directly by filtering out the deleted item
+          setDestinatarios(prevDests => prevDests.filter(d => d.id !== destinatario.id));
           showSuccessToast("Destinatário excluído com sucesso!");
         } catch (error) {
           console.error('Erro ao excluir destinatário:', error);

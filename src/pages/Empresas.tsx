@@ -74,7 +74,8 @@ export default function Empresas() {
         detalhes: `Empresa: ${values.razao_social}`
       });
       
-      await fetchEmpresas();
+      // Add the new item directly to the state instead of fetching again
+      setEmpresas(prevEmpresas => [...prevEmpresas, novaEmpresa]);
       showSuccessToast("Empresa cadastrada com sucesso!");
       form.reset();
     } catch (error) {
@@ -99,7 +100,8 @@ export default function Empresas() {
             detalhes: `Empresa: ${empresa.razao_social}`
           });
           
-          await fetchEmpresas();
+          // Update the state directly by filtering out the deleted item
+          setEmpresas(prevEmpresas => prevEmpresas.filter(e => e.id !== empresa.id));
           showSuccessToast("Empresa excluída com sucesso!");
         } catch (error) {
           console.error('Erro ao excluir empresa:', error);

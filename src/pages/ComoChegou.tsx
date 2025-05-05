@@ -50,7 +50,8 @@ export default function ComoChegou() {
           detalhes: `Meio de transporte: ${novoMeioTransporte.trim()}`
         });
         
-        await fetchMeiosTransporte();
+        // Add the new item to the state directly instead of fetching again
+        setMeiosTransporte(prevMeios => [...prevMeios, novoMeio]);
         setNovoMeioTransporte("");
         showSuccessToast("Meio de transporte adicionado com sucesso!");
       } catch (error) {
@@ -77,7 +78,8 @@ export default function ComoChegou() {
             detalhes: `Meio de transporte: ${meio.nome}`
           });
           
-          await fetchMeiosTransporte();
+          // Update the state directly by filtering out the deleted item
+          setMeiosTransporte(prevMeios => prevMeios.filter(m => m.id !== meio.id));
           showSuccessToast("Meio de transporte excluído com sucesso!");
         } catch (error) {
           console.error('Erro ao excluir meio de transporte:', error);
