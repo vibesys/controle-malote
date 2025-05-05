@@ -30,7 +30,8 @@ export default function Departamentos() {
   const [departamentos, setDepartamentos] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
-  
+
+  // Carrega dados iniciais
   useEffect(() => {
     fetchDepartamentos();
   }, []);
@@ -65,17 +66,23 @@ export default function Departamentos() {
       const novoDepartamento = await departamentosDB.create({ nome_departamento: values.nome_departamento });
       console.log("Departamento cadastrado:", novoDepartamento);
       
-      await logsDB.create({
-        acao: "Criou departamento",
-        usuario_email: user?.username || "sistema",
-        data_hora: new Date().toISOString(),
-        detalhes: `Departamento: ${values.nome_departamento}`
-      });
-      
       // Add the new item directly to the state instead of fetching again
       setDepartamentos(prevDeps => [...prevDeps, novoDepartamento]);
       showSuccessToast("Departamento cadastrado com sucesso!");
       form.reset();
+      
+      // Try to log the action, but don't block on failure
+      try {
+        await logsDB.create({
+          acao: "Criou departamento",
+          usuario_email: user?.username || "sistema",
+          data_hora: new Date().toISOString(),
+          detalhes: `Departamento: ${values.nome_departamento}`
+        });
+      } catch (logError) {
+        console.error('Erro ao criar log (não crítico):', logError);
+        // This error doesn't affect the main functionality, so we just log it
+      }
     } catch (error) {
       console.error('Erro ao cadastrar departamento:', error);
       showErrorToast("Erro ao cadastrar departamento");
@@ -91,16 +98,22 @@ export default function Departamentos() {
         try {
           await departamentosDB.remove(departamento.id);
           
-          await logsDB.create({
-            acao: "Excluiu departamento",
-            usuario_email: user?.username || "sistema",
-            data_hora: new Date().toISOString(),
-            detalhes: `Departamento: ${departamento.nome_departamento}`
-          });
-          
           // Update the state directly by filtering out the deleted item
           setDepartamentos(prevDeps => prevDeps.filter(d => d.id !== departamento.id));
           showSuccessToast("Departamento excluído com sucesso!");
+          
+          // Try to log the action, but don't block on failure
+          try {
+            await logsDB.create({
+              acao: "Excluiu departamento",
+              usuario_email: user?.username || "sistema",
+              data_hora: new Date().toISOString(),
+              detalhes: `Departamento: ${departamento.nome_departamento}`
+            });
+          } catch (logError) {
+            console.error('Erro ao criar log (não crítico):', logError);
+            // This error doesn't affect the main functionality, so we just log it
+          }
         } catch (error) {
           console.error('Erro ao excluir departamento:', error);
           showErrorToast("Erro ao excluir departamento");
@@ -130,7 +143,7 @@ export default function Departamentos() {
                     <FormItem>
                       <FormLabel>Nome do Departamento</FormLabel>
                       <FormControl>
-                        <Input placeholder="Nome do departamento" {...field} />
+                        <Input placeholder="Digite o nome do departamento" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

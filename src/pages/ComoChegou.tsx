@@ -43,17 +43,23 @@ export default function ComoChegou() {
         const novoMeio = await meiosTransporteDB.create({ nome: novoMeioTransporte.trim() });
         console.log("Meio de transporte cadastrado:", novoMeio);
         
-        await logsDB.create({
-          acao: "Criou meio de transporte",
-          usuario_email: user?.username || "sistema",
-          data_hora: new Date().toISOString(),
-          detalhes: `Meio de transporte: ${novoMeioTransporte.trim()}`
-        });
-        
         // Add the new item to the state directly instead of fetching again
         setMeiosTransporte(prevMeios => [...prevMeios, novoMeio]);
         setNovoMeioTransporte("");
         showSuccessToast("Meio de transporte adicionado com sucesso!");
+        
+        // Try to log the action, but don't block on failure
+        try {
+          await logsDB.create({
+            acao: "Criou meio de transporte",
+            usuario_email: user?.username || "sistema",
+            data_hora: new Date().toISOString(),
+            detalhes: `Meio de transporte: ${novoMeioTransporte.trim()}`
+          });
+        } catch (logError) {
+          console.error('Erro ao criar log (não crítico):', logError);
+          // This error doesn't affect the main functionality, so we just log it
+        }
       } catch (error) {
         console.error('Erro ao adicionar meio de transporte:', error);
         showErrorToast("Erro ao adicionar meio de transporte");
@@ -71,16 +77,22 @@ export default function ComoChegou() {
           setIsLoading(true);
           await meiosTransporteDB.remove(meio.id);
           
-          await logsDB.create({
-            acao: "Excluiu meio de transporte",
-            usuario_email: user?.username || "sistema",
-            data_hora: new Date().toISOString(),
-            detalhes: `Meio de transporte: ${meio.nome}`
-          });
-          
           // Update the state directly by filtering out the deleted item
           setMeiosTransporte(prevMeios => prevMeios.filter(m => m.id !== meio.id));
           showSuccessToast("Meio de transporte excluído com sucesso!");
+          
+          // Try to log the action, but don't block on failure
+          try {
+            await logsDB.create({
+              acao: "Excluiu meio de transporte",
+              usuario_email: user?.username || "sistema",
+              data_hora: new Date().toISOString(),
+              detalhes: `Meio de transporte: ${meio.nome}`
+            });
+          } catch (logError) {
+            console.error('Erro ao criar log (não crítico):', logError);
+            // This error doesn't affect the main functionality, so we just log it
+          }
         } catch (error) {
           console.error('Erro ao excluir meio de transporte:', error);
           showErrorToast("Erro ao excluir meio de transporte");

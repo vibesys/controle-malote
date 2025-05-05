@@ -67,17 +67,23 @@ export default function Empresas() {
       const novaEmpresa = await empresasDB.create({ razao_social: values.razao_social });
       console.log("Empresa cadastrada:", novaEmpresa);
       
-      await logsDB.create({
-        acao: "Criou empresa",
-        usuario_email: user?.username || "sistema",
-        data_hora: new Date().toISOString(),
-        detalhes: `Empresa: ${values.razao_social}`
-      });
-      
       // Add the new item directly to the state instead of fetching again
       setEmpresas(prevEmpresas => [...prevEmpresas, novaEmpresa]);
       showSuccessToast("Empresa cadastrada com sucesso!");
       form.reset();
+      
+      // Try to log the action, but don't block on failure
+      try {
+        await logsDB.create({
+          acao: "Criou empresa",
+          usuario_email: user?.username || "sistema",
+          data_hora: new Date().toISOString(),
+          detalhes: `Empresa: ${values.razao_social}`
+        });
+      } catch (logError) {
+        console.error('Erro ao criar log (não crítico):', logError);
+        // This error doesn't affect the main functionality, so we just log it
+      }
     } catch (error) {
       console.error('Erro ao cadastrar empresa:', error);
       showErrorToast("Erro ao cadastrar empresa");
@@ -93,16 +99,22 @@ export default function Empresas() {
         try {
           await empresasDB.remove(empresa.id);
           
-          await logsDB.create({
-            acao: "Excluiu empresa",
-            usuario_email: user?.username || "sistema",
-            data_hora: new Date().toISOString(),
-            detalhes: `Empresa: ${empresa.razao_social}`
-          });
-          
           // Update the state directly by filtering out the deleted item
           setEmpresas(prevEmpresas => prevEmpresas.filter(e => e.id !== empresa.id));
           showSuccessToast("Empresa excluída com sucesso!");
+          
+          // Try to log the action, but don't block on failure
+          try {
+            await logsDB.create({
+              acao: "Excluiu empresa",
+              usuario_email: user?.username || "sistema",
+              data_hora: new Date().toISOString(),
+              detalhes: `Empresa: ${empresa.razao_social}`
+            });
+          } catch (logError) {
+            console.error('Erro ao criar log (não crítico):', logError);
+            // This error doesn't affect the main functionality, so we just log it
+          }
         } catch (error) {
           console.error('Erro ao excluir empresa:', error);
           showErrorToast("Erro ao excluir empresa");

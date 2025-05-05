@@ -30,7 +30,8 @@ export default function Destinatarios() {
   const [destinatarios, setDestinatarios] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { user } = useAuth();
-  
+
+  // Carrega dados iniciais
   useEffect(() => {
     fetchDestinatarios();
   }, []);
@@ -38,9 +39,9 @@ export default function Destinatarios() {
   const fetchDestinatarios = async () => {
     try {
       setIsLoading(true);
-      console.log("Fetching destinatários...");
+      console.log("Fetching destinatarios...");
       const data = await destinatariosDB.getAll();
-      console.log("Destinatários loaded:", data);
+      console.log("Destinatarios loaded:", data);
       setDestinatarios(data || []);
     } catch (error) {
       console.error('Erro ao carregar destinatários:', error);
@@ -61,21 +62,27 @@ export default function Destinatarios() {
     setIsLoading(true);
     
     try {
-      console.log("Cadastrando novo destinatário:", values);
+      console.log("Cadastrando novo destinatario:", values);
       const novoDestinatario = await destinatariosDB.create({ nome_destinatario: values.nome_destinatario });
-      console.log("Destinatário cadastrado:", novoDestinatario);
-      
-      await logsDB.create({
-        acao: "Criou destinatário",
-        usuario_email: user?.username || "sistema",
-        data_hora: new Date().toISOString(),
-        detalhes: `Destinatário: ${values.nome_destinatario}`
-      });
+      console.log("Destinatario cadastrado:", novoDestinatario);
       
       // Add the new item directly to the state instead of fetching again
       setDestinatarios(prevDests => [...prevDests, novoDestinatario]);
       showSuccessToast("Destinatário cadastrado com sucesso!");
       form.reset();
+      
+      // Try to log the action, but don't block on failure
+      try {
+        await logsDB.create({
+          acao: "Criou destinatário",
+          usuario_email: user?.username || "sistema",
+          data_hora: new Date().toISOString(),
+          detalhes: `Destinatário: ${values.nome_destinatario}`
+        });
+      } catch (logError) {
+        console.error('Erro ao criar log (não crítico):', logError);
+        // This error doesn't affect the main functionality, so we just log it
+      }
     } catch (error) {
       console.error('Erro ao cadastrar destinatário:', error);
       showErrorToast("Erro ao cadastrar destinatário");
@@ -91,16 +98,22 @@ export default function Destinatarios() {
         try {
           await destinatariosDB.remove(destinatario.id);
           
-          await logsDB.create({
-            acao: "Excluiu destinatário",
-            usuario_email: user?.username || "sistema",
-            data_hora: new Date().toISOString(),
-            detalhes: `Destinatário: ${destinatario.nome_destinatario}`
-          });
-          
           // Update the state directly by filtering out the deleted item
           setDestinatarios(prevDests => prevDests.filter(d => d.id !== destinatario.id));
           showSuccessToast("Destinatário excluído com sucesso!");
+          
+          // Try to log the action, but don't block on failure
+          try {
+            await logsDB.create({
+              acao: "Excluiu destinatário",
+              usuario_email: user?.username || "sistema",
+              data_hora: new Date().toISOString(),
+              detalhes: `Destinatário: ${destinatario.nome_destinatario}`
+            });
+          } catch (logError) {
+            console.error('Erro ao criar log (não crítico):', logError);
+            // This error doesn't affect the main functionality, so we just log it
+          }
         } catch (error) {
           console.error('Erro ao excluir destinatário:', error);
           showErrorToast("Erro ao excluir destinatário");
@@ -130,7 +143,7 @@ export default function Destinatarios() {
                     <FormItem>
                       <FormLabel>Nome do Destinatário</FormLabel>
                       <FormControl>
-                        <Input placeholder="Nome do destinatário" {...field} />
+                        <Input placeholder="Digite o nome do destinatário" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
