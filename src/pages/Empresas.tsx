@@ -40,7 +40,9 @@ export default function Empresas() {
   const fetchEmpresas = async () => {
     try {
       setIsLoading(true);
+      console.log("Fetching empresas...");
       const data = await empresasDB.getAll();
+      console.log("Empresas loaded:", data);
       setEmpresas(data);
     } catch (error) {
       console.error('Erro ao carregar empresas:', error);

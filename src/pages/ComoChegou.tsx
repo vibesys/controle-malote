@@ -23,7 +23,9 @@ export default function ComoChegou() {
   const fetchMeiosTransporte = async () => {
     try {
       setIsLoading(true);
+      console.log("Fetching meios de transporte...");
       const data = await meiosTransporteDB.getAll();
+      console.log("Meios de transporte loaded:", data);
       setMeiosTransporte(data);
     } catch (error) {
       console.error('Erro ao carregar meios de transporte:', error);

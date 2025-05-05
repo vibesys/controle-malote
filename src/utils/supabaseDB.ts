@@ -48,8 +48,8 @@ export const empresasDB = {
     const { data, error } = await supabase
       .from('empresas')
       .select('*')
-      .order('razao_social', { ascending: true })
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .order('razao_social', { ascending: true });
+    
     if (error) throw error;
     return data;
   },
@@ -58,8 +58,8 @@ export const empresasDB = {
       .from('empresas')
       .select('*')
       .eq('id', id)
-      .single()
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .single();
+    
     if (error) throw error;
     return data;
   },
@@ -68,8 +68,8 @@ export const empresasDB = {
       .from('empresas')
       .insert(empresa)
       .select()
-      .single()
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .single();
+    
     if (error) throw error;
     return data;
   },
@@ -79,8 +79,8 @@ export const empresasDB = {
       .update(empresa)
       .eq('id', id)
       .select()
-      .single()
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .single();
+    
     if (error) throw error;
     return data;
   },
@@ -88,8 +88,8 @@ export const empresasDB = {
     const { error } = await supabase
       .from('empresas')
       .delete()
-      .eq('id', id)
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .eq('id', id);
+    
     if (error) throw error;
     return true;
   }
@@ -100,8 +100,8 @@ export const departamentosDB = {
     const { data, error } = await supabase
       .from('departamentos')
       .select('*')
-      .order('nome_departamento', { ascending: true })
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .order('nome_departamento', { ascending: true });
+    
     if (error) throw error;
     return data;
   },
@@ -110,8 +110,8 @@ export const departamentosDB = {
       .from('departamentos')
       .select('*')
       .eq('id', id)
-      .single()
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .single();
+    
     if (error) throw error;
     return data;
   },
@@ -120,8 +120,8 @@ export const departamentosDB = {
       .from('departamentos')
       .insert(departamento)
       .select()
-      .single()
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .single();
+    
     if (error) throw error;
     return data;
   },
@@ -131,8 +131,8 @@ export const departamentosDB = {
       .update(departamento)
       .eq('id', id)
       .select()
-      .single()
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .single();
+    
     if (error) throw error;
     return data;
   },
@@ -140,8 +140,8 @@ export const departamentosDB = {
     const { error } = await supabase
       .from('departamentos')
       .delete()
-      .eq('id', id)
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .eq('id', id);
+    
     if (error) throw error;
     return true;
   }
@@ -152,8 +152,8 @@ export const destinatariosDB = {
     const { data, error } = await supabase
       .from('destinatarios')
       .select('*')
-      .order('nome_destinatario', { ascending: true })
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .order('nome_destinatario', { ascending: true });
+    
     if (error) throw error;
     return data;
   },
@@ -162,8 +162,8 @@ export const destinatariosDB = {
       .from('destinatarios')
       .select('*')
       .eq('id', id)
-      .single()
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .single();
+    
     if (error) throw error;
     return data;
   },
@@ -172,8 +172,8 @@ export const destinatariosDB = {
       .from('destinatarios')
       .insert(destinatario)
       .select()
-      .single()
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .single();
+    
     if (error) throw error;
     return data;
   },
@@ -183,8 +183,8 @@ export const destinatariosDB = {
       .update(destinatario)
       .eq('id', id)
       .select()
-      .single()
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .single();
+    
     if (error) throw error;
     return data;
   },
@@ -192,8 +192,8 @@ export const destinatariosDB = {
     const { error } = await supabase
       .from('destinatarios')
       .delete()
-      .eq('id', id)
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .eq('id', id);
+    
     if (error) throw error;
     return true;
   }
@@ -204,8 +204,8 @@ export const meiosTransporteDB = {
     const { data, error } = await supabase
       .from('meios_transporte')
       .select('*')
-      .order('nome', { ascending: true })
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .order('nome', { ascending: true });
+    
     if (error) throw error;
     return data;
   },
@@ -214,8 +214,8 @@ export const meiosTransporteDB = {
       .from('meios_transporte')
       .select('*')
       .eq('id', id)
-      .single()
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .single();
+    
     if (error) throw error;
     return data;
   },
@@ -224,8 +224,8 @@ export const meiosTransporteDB = {
       .from('meios_transporte')
       .insert(meioTransporte)
       .select()
-      .single()
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .single();
+    
     if (error) throw error;
     return data;
   },
@@ -235,8 +235,8 @@ export const meiosTransporteDB = {
       .update(meioTransporte)
       .eq('id', id)
       .select()
-      .single()
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .single();
+    
     if (error) throw error;
     return data;
   },
@@ -244,8 +244,8 @@ export const meiosTransporteDB = {
     const { error } = await supabase
       .from('meios_transporte')
       .delete()
-      .eq('id', id)
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .eq('id', id);
+    
     if (error) throw error;
     return true;
   }
@@ -256,8 +256,8 @@ export const malotesDB = {
     const { data, error } = await supabase
       .from('malotes')
       .select('*')
-      .order('data_cadastro', { ascending: false })
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .order('data_cadastro', { ascending: false });
+    
     if (error) throw error;
     return data;
   },
@@ -266,8 +266,8 @@ export const malotesDB = {
       .from('malotes')
       .select('*')
       .eq('tipo_tabela', tipo)
-      .order('data_cadastro', { ascending: false })
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .order('data_cadastro', { ascending: false });
+    
     if (error) throw error;
     return data;
   },
@@ -293,8 +293,8 @@ export const malotesDB = {
       .from('malotes')
       .insert(malote)
       .select()
-      .single()
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .single();
+    
     if (error) throw error;
     return data;
   },
@@ -304,8 +304,8 @@ export const malotesDB = {
       .update(malote)
       .eq('id', id)
       .select()
-      .single()
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .single();
+    
     if (error) throw error;
     return data;
   },
@@ -313,8 +313,8 @@ export const malotesDB = {
     const { error } = await supabase
       .from('malotes')
       .delete()
-      .eq('id', id)
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .eq('id', id);
+    
     if (error) throw error;
     return true;
   },
@@ -322,8 +322,8 @@ export const malotesDB = {
     const { error } = await supabase
       .from('malotes')
       .delete()
-      .in('id', ids)
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .in('id', ids);
+    
     if (error) throw error;
     return ids.length;
   }
@@ -335,8 +335,8 @@ export const logsDB = {
       .from('logs')
       .insert(log)
       .select()
-      .single()
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .single();
+    
     if (error) throw error;
     return data;
   },
@@ -344,8 +344,8 @@ export const logsDB = {
     const { data, error } = await supabase
       .from('logs')
       .select('*')
-      .order('data_hora', { ascending: false })
-      .headers({ 'x-admin-bypass-rls': 'true' });
+      .order('data_hora', { ascending: false });
+    
     if (error) throw error;
     return data;
   }
