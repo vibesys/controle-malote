@@ -8,18 +8,26 @@ import {
   PaginationPrevious,
   PaginationEllipsis,
 } from "@/components/ui/pagination";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface MalotesPaginationProps {
   currentPage: number;
-  totalPages: number;
+  totalItems: number;
+  itemsPerPage: number;
   onPageChange: (page: number) => void;
+  onItemsPerPageChange: (itemsPerPage: number) => void;
 }
 
 export const MalotesPagination = ({ 
   currentPage, 
-  totalPages,
-  onPageChange 
+  totalItems,
+  itemsPerPage,
+  onPageChange,
+  onItemsPerPageChange
 }: MalotesPaginationProps) => {
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
   const renderPaginationItems = () => {
     const items = [];
     
@@ -94,10 +102,28 @@ export const MalotesPagination = ({
     return items;
   };
 
-  if (totalPages <= 1) return null;
+  if (totalPages <= 0) return null;
 
   return (
-    <div className="mt-4 flex justify-center">
+    <div className="mt-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-gray-600">Itens por página:</span>
+        <Select
+          value={String(itemsPerPage)}
+          onValueChange={(value) => onItemsPerPageChange(Number(value))}
+        >
+          <SelectTrigger className="w-[80px]">
+            <SelectValue placeholder={itemsPerPage} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="10">10</SelectItem>
+            <SelectItem value="20">20</SelectItem>
+            <SelectItem value="50">50</SelectItem>
+            <SelectItem value="100">100</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       <Pagination>
         <PaginationContent>
           <PaginationItem>
@@ -109,6 +135,7 @@ export const MalotesPagination = ({
               }}
               aria-disabled={currentPage === 1}
               className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+              icon={<ChevronLeft className="h-4 w-4" />}
             />
           </PaginationItem>
           
@@ -123,10 +150,15 @@ export const MalotesPagination = ({
               }}
               aria-disabled={currentPage === totalPages}
               className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+              icon={<ChevronRight className="h-4 w-4" />}
             />
           </PaginationItem>
         </PaginationContent>
       </Pagination>
+
+      <div className="text-sm text-gray-600">
+        Mostrando {Math.min(1 + (currentPage - 1) * itemsPerPage, totalItems)} a {Math.min(currentPage * itemsPerPage, totalItems)} de {totalItems} registros
+      </div>
     </div>
   );
 };
