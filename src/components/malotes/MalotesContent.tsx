@@ -81,11 +81,10 @@ export const MalotesContent = ({
 
       <MalotesPagination 
         currentPage={currentPage}
-        totalPages={totalPages}
+        totalItems={malotes.length}
         onPageChange={setCurrentPage}
         itemsPerPage={itemsPerPage}
         onItemsPerPageChange={handleItemsPerPageChange}
-        totalItems={malotes.length}
       />
 
       {/* Keep the dialog component but it won't be shown since dialogAberto is never set to true */}

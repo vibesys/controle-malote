@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { Malote } from "@/types/malote";
 
@@ -13,14 +12,37 @@ export const malotesDB = {
     return data;
   },
   getByTipo: async (tipo: string) => {
-    const { data, error } = await supabase
-      .from('malotes')
-      .select('*')
-      .eq('tipo_tabela', tipo)
-      .order('data_cadastro', { ascending: false });
+    // By default, Supabase has a limit of 1000 records
+    // To get all records, we need to use pagination
+    let allMalotes: any[] = [];
+    let page = 0;
+    const pageSize = 1000; // Maximum allowed by Supabase
+    let hasMore = true;
     
-    if (error) throw error;
-    return data;
+    console.log("Fetching all malotes for tipo_tabela:", tipo);
+    
+    while (hasMore) {
+      const { data, error } = await supabase
+        .from('malotes')
+        .select('*')
+        .eq('tipo_tabela', tipo)
+        .order('data_cadastro', { ascending: false })
+        .range(page * pageSize, (page + 1) * pageSize - 1);
+      
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        allMalotes = [...allMalotes, ...data];
+        page++;
+        hasMore = data.length === pageSize;
+        console.log(`Fetched page ${page} with ${data.length} malotes. Total so far: ${allMalotes.length}`);
+      } else {
+        hasMore = false;
+      }
+    }
+    
+    console.log(`Total malotes fetched: ${allMalotes.length}`);
+    return allMalotes;
   },
   create: async (malote: {
     data_cadastro: string;

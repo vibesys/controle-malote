@@ -21,8 +21,13 @@ export function useMalotes(tipoTabela: string = "recepcao") {
     try {
       setLoading(true);
       console.log("Fetching malotes for tipo_tabela:", tipoTabela);
+      console.time("fetchMalotes");
+      
       const filteredMalotes = await malotesDB.getByTipo(tipoTabela);
-      console.log("Fetched malotes:", filteredMalotes);
+      
+      console.timeEnd("fetchMalotes");
+      console.log("Fetched malotes count:", filteredMalotes.length);
+      
       setMalotes(filteredMalotes);
     } catch (error) {
       console.error("Erro ao carregar malotes:", error);

@@ -135,7 +135,6 @@ export const MalotesPagination = ({
               }}
               aria-disabled={currentPage === 1}
               className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
-              icon={<ChevronLeft className="h-4 w-4" />}
             />
           </PaginationItem>
           
@@ -150,7 +149,6 @@ export const MalotesPagination = ({
               }}
               aria-disabled={currentPage === totalPages}
               className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
-              icon={<ChevronRight className="h-4 w-4" />}
             />
           </PaginationItem>
         </PaginationContent>
