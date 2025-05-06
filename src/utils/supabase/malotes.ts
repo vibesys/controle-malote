@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { Malote } from "@/types/malote";
 
@@ -12,36 +13,52 @@ export const malotesDB = {
     return data;
   },
   getByTipo: async (tipo: string) => {
-    // By default, Supabase has a limit of 1000 records
-    // To get all records, we need to use pagination
+    // Fetch all records using pagination
     let allMalotes: any[] = [];
     let page = 0;
     const pageSize = 1000; // Maximum allowed by Supabase
     let hasMore = true;
     
-    console.log("Fetching all malotes for tipo_tabela:", tipo);
+    console.log(`Starting to fetch malotes for tipo_tabela: ${tipo}`);
     
     while (hasMore) {
-      const { data, error } = await supabase
-        .from('malotes')
-        .select('*')
-        .eq('tipo_tabela', tipo)
-        .order('data_cadastro', { ascending: false })
-        .range(page * pageSize, (page + 1) * pageSize - 1);
-      
-      if (error) throw error;
-      
-      if (data && data.length > 0) {
-        allMalotes = [...allMalotes, ...data];
-        page++;
-        hasMore = data.length === pageSize;
-        console.log(`Fetched page ${page} with ${data.length} malotes. Total so far: ${allMalotes.length}`);
-      } else {
+      try {
+        const from = page * pageSize;
+        const to = from + pageSize - 1;
+        
+        console.log(`Fetching page ${page + 1}, range ${from}-${to}`);
+        
+        const { data, error } = await supabase
+          .from('malotes')
+          .select('*')
+          .eq('tipo_tabela', tipo)
+          .order('data_cadastro', { ascending: false })
+          .range(from, to);
+        
+        if (error) {
+          console.error(`Error fetching page ${page + 1}:`, error);
+          throw error;
+        }
+        
+        if (data && data.length > 0) {
+          console.log(`Retrieved ${data.length} records on page ${page + 1}`);
+          allMalotes = [...allMalotes, ...data];
+          page++;
+          
+          // Check if we got a full page of results, suggesting there might be more
+          hasMore = data.length === pageSize;
+        } else {
+          console.log(`No more data found after page ${page}`);
+          hasMore = false;
+        }
+      } catch (err) {
+        console.error(`Failed during pagination at page ${page + 1}:`, err);
         hasMore = false;
+        throw err;
       }
     }
     
-    console.log(`Total malotes fetched: ${allMalotes.length}`);
+    console.log(`Total records fetched for ${tipo}: ${allMalotes.length}`);
     return allMalotes;
   },
   create: async (malote: {

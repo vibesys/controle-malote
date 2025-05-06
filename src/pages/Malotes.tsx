@@ -39,7 +39,7 @@ export default function Malotes() {
   useEffect(() => {
     // Log current state to help with debugging
     console.log("Malotes component mounted with tipo_tabela:", tipoTabela);
-    console.log("Malotes data:", { count: malotes.length, loading });
+    console.log(`Malotes data loaded: ${malotes.length} records`, { loading });
     setIsInitialized(true);
   }, [tipoTabela, malotes, loading]);
 
@@ -47,6 +47,9 @@ export default function Malotes() {
 
   return (
     <PageContainer title={titulo} backUrl="/">
+      <div className="mb-2 text-sm text-gray-500">
+        {loading ? "Carregando dados..." : `Exibindo ${malotes.length} registros no total`}
+      </div>
       <MalotesContent
         malotes={malotes}
         loading={loading}

@@ -26,7 +26,7 @@ export function useMalotes(tipoTabela: string = "recepcao") {
       const filteredMalotes = await malotesDB.getByTipo(tipoTabela);
       
       console.timeEnd("fetchMalotes");
-      console.log("Fetched malotes count:", filteredMalotes.length);
+      console.log(`Fetched ${filteredMalotes.length} malotes for tipo_tabela: ${tipoTabela}`);
       
       setMalotes(filteredMalotes);
     } catch (error) {
