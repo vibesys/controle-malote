@@ -1,3 +1,4 @@
+
 import { Malote } from "@/types/malote";
 import { useForm } from "react-hook-form";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog";
@@ -6,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Form } from "@/components/ui/form";
 import { DatePickerField } from "./DatePickerField";
+import { showSuccessToast, showErrorToast } from "@/components/ui/toast-custom";
 
 interface MaloteFormDialogProps {
   open: boolean;
@@ -51,9 +53,13 @@ export const MaloteFormDialog = ({
         tipo_tabela: malote?.tipo_tabela || tipoTabela
       };
       console.log("Saving edited malote with tipo_tabela:", updatedData.tipo_tabela);
+      
       onSave(updatedData);
+      showSuccessToast("Malote salvo com sucesso!");
+      onClose();
     } catch (error) {
       console.error("Error in handleSubmit:", error);
+      showErrorToast("Erro ao salvar malote");
     }
   };
 

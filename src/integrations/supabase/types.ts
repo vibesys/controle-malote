@@ -226,6 +226,26 @@ export type Database = {
         Args: { p_email: string; p_senha: string }
         Returns: Json
       }
+      create_malote: {
+        Args: {
+          p_data_cadastro: string
+          p_documento_recebido: string
+          p_data_chegada: string
+          p_como_chegou: string
+          p_informar_outros: string
+          p_empresa_id: string
+          p_razao_social: string
+          p_pessoa_remetente: string
+          p_departamento_id: string
+          p_nome_departamento: string
+          p_destinatario_id: string
+          p_nome_destinatario: string
+          p_pessoa_que_recebeu: string
+          p_data_entrega: string
+          p_tipo_tabela: string
+        }
+        Returns: string
+      }
       is_admin: {
         Args: { user_email: string }
         Returns: boolean

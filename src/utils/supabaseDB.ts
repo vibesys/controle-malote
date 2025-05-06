@@ -277,12 +277,12 @@ export const malotesDB = {
     data_chegada: string;
     como_chegou: string;
     informar_outros?: string;
-    empresa_id?: string;
+    empresa_id?: string | null;
     razao_social: string;
     pessoa_remetente: string;
-    departamento_id?: string;
+    departamento_id?: string | null;
     nome_departamento: string;
-    destinatario_id?: string;
+    destinatario_id?: string | null;
     nome_destinatario: string;
     pessoa_que_recebeu: string;
     data_entrega: string;
@@ -290,7 +290,7 @@ export const malotesDB = {
   }) => {
     console.log("Creating malote with tipo_tabela:", malote.tipo_tabela);
     
-    // Use RPC (stored procedure) instead of direct insert to bypass RLS
+    // Use the new create_malote function that bypasses RLS
     const { data, error } = await supabase
       .rpc('create_malote', {
         p_data_cadastro: malote.data_cadastro,
@@ -298,12 +298,12 @@ export const malotesDB = {
         p_data_chegada: malote.data_chegada,
         p_como_chegou: malote.como_chegou,
         p_informar_outros: malote.informar_outros || '',
-        p_empresa_id: malote.empresa_id,
+        p_empresa_id: malote.empresa_id || null,
         p_razao_social: malote.razao_social,
         p_pessoa_remetente: malote.pessoa_remetente,
-        p_departamento_id: malote.departamento_id,
+        p_departamento_id: malote.departamento_id || null,
         p_nome_departamento: malote.nome_departamento,
-        p_destinatario_id: malote.destinatario_id,
+        p_destinatario_id: malote.destinatario_id || null,
         p_nome_destinatario: malote.nome_destinatario,
         p_pessoa_que_recebeu: malote.pessoa_que_recebeu,
         p_data_entrega: malote.data_entrega,
