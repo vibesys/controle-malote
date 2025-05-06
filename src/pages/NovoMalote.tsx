@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { z } from "zod";
@@ -32,7 +33,7 @@ import {
 } from "@/components/ui/popover";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { showSuccessToast } from "@/components/ui/toast-custom";
+import { showSuccessToast, showErrorToast } from "@/components/ui/toast-custom";
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -246,18 +247,24 @@ export default function NovoMalote() {
       console.log("Creating malote with data:", newMalote);
       await malotesDB.create(newMalote);
       
-      await logsDB.create({
-        acao: `Criou malote (${tipoTabela})`,
-        usuario_email: user?.username || "sistema",
-        data_hora: new Date().toISOString(),
-        detalhes: `Malote: ${values.documento_recebido}`
-      });
+      // Try to create the log but don't block on failure
+      try {
+        await logsDB.create({
+          acao: `Criou malote (${tipoTabela})`,
+          usuario_email: user?.username || "sistema",
+          data_hora: new Date().toISOString(),
+          detalhes: `Malote: ${values.documento_recebido}`
+        });
+      } catch (logError) {
+        console.error('Erro ao criar log (não crítico):', logError);
+        // We don't throw here since log failure shouldn't prevent malote creation
+      }
       
       showSuccessToast("Malote cadastrado com sucesso!");
       navigate(`/malotes?tipo=${tipoTabela}`);
     } catch (error) {
       console.error('Erro ao cadastrar malote:', error);
-      showSuccessToast("Erro ao cadastrar malote. Verifique o console para mais informações.", "error");
+      showErrorToast("Erro ao cadastrar malote. Verifique o console para mais informações.");
     } finally {
       setIsLoading(false);
     }

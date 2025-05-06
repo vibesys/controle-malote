@@ -44,13 +44,17 @@ export const MaloteFormDialog = ({
   });
 
   const handleSubmit = (data: Malote) => {
-    // Ensure the tipo_tabela is preserved
-    const updatedData = {
-      ...data,
-      tipo_tabela: malote?.tipo_tabela || tipoTabela
-    };
-    console.log("Saving edited malote with tipo_tabela:", updatedData.tipo_tabela);
-    onSave(updatedData);
+    try {
+      // Ensure the tipo_tabela is preserved
+      const updatedData = {
+        ...data,
+        tipo_tabela: malote?.tipo_tabela || tipoTabela
+      };
+      console.log("Saving edited malote with tipo_tabela:", updatedData.tipo_tabela);
+      onSave(updatedData);
+    } catch (error) {
+      console.error("Error in handleSubmit:", error);
+    }
   };
 
   return (

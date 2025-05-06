@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { showSuccessToast, showErrorToast } from "@/components/ui/toast-custom";
 import { AuthResponse, LoginCredentials, PasswordChangeData } from "@/types/auth";
@@ -288,11 +289,26 @@ export const malotesDB = {
     tipo_tabela: string;
   }) => {
     console.log("Creating malote with tipo_tabela:", malote.tipo_tabela);
+    
+    // Use RPC (stored procedure) instead of direct insert to bypass RLS
     const { data, error } = await supabase
-      .from('malotes')
-      .insert(malote)
-      .select()
-      .single();
+      .rpc('create_malote', {
+        p_data_cadastro: malote.data_cadastro,
+        p_documento_recebido: malote.documento_recebido,
+        p_data_chegada: malote.data_chegada,
+        p_como_chegou: malote.como_chegou,
+        p_informar_outros: malote.informar_outros || '',
+        p_empresa_id: malote.empresa_id,
+        p_razao_social: malote.razao_social,
+        p_pessoa_remetente: malote.pessoa_remetente,
+        p_departamento_id: malote.departamento_id,
+        p_nome_departamento: malote.nome_departamento,
+        p_destinatario_id: malote.destinatario_id,
+        p_nome_destinatario: malote.nome_destinatario,
+        p_pessoa_que_recebeu: malote.pessoa_que_recebeu,
+        p_data_entrega: malote.data_entrega,
+        p_tipo_tabela: malote.tipo_tabela
+      });
     
     if (error) throw error;
     return data;
