@@ -46,9 +46,13 @@ export default function SelecionarTipoMalote({ modo }: SelecionarTipoMaloteProps
   const destino = modo === "visualizar" ? "/malotes" : "/malotes/novo";
   
   // Determine which options to show based on user profile
-  const shouldShowRecepcao = user?.isAdmin || user?.perfil === "recepcao" || user?.perfil === "Recepcao";
-  const shouldShowTriagem = user?.isAdmin || user?.perfil === "triagem" || user?.perfil === "Triagem";
-  const shouldShowDpRh = user?.isAdmin || user?.perfil === "dp-rh" || user?.perfil === "DP-RH";
+  // Admin can see all options
+  const isAdmin = user?.isAdmin || user?.perfil === "Administrador";
+  
+  // Each profile can only see their respective option
+  const shouldShowRecepcao = isAdmin || user?.perfil === "recepcao" || user?.perfil === "Recepcao";
+  const shouldShowTriagem = isAdmin || user?.perfil === "triagem" || user?.perfil === "Triagem";
+  const shouldShowDpRh = isAdmin || user?.perfil === "dp-rh" || user?.perfil === "DP-RH";
 
   return (
     <PageContainer title={titulo} backUrl="/">
