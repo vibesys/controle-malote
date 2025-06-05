@@ -56,7 +56,7 @@ export function MaloteTable({
             columns={maloteColumns}
             onSelectionChange={onSelectionChange}
             enableSelection={true}
-            onRowClick={undefined} // Disable edit functionality by removing the click handler
+            onRowClick={onEdit}
             actions={onDelete ? (row) => (
               <button 
                 onClick={(e) => {

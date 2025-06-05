@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Malote } from "@/types/malote";
 import { MaloteFormDialog } from "./MaloteFormDialog";
@@ -34,7 +35,6 @@ export const MalotesContent = ({
   const [itemsPerPageKey] = useState(`itemsPerPage-${tipoTabela}`);
   const [itemsPerPage, setItemsPerPage] = useLocalStorage(itemsPerPageKey, 10);
   
-  // Keep these state variables but we won't use them for editing
   const [maloteEmEdicao, setMaloteEmEdicao] = useState<Malote | null>(null);
   const [dialogAberto, setDialogAberto] = useState(false);
 
@@ -51,6 +51,11 @@ export const MalotesContent = ({
   const handleItemsPerPageChange = (newItemsPerPage: number) => {
     setItemsPerPage(newItemsPerPage);
     setCurrentPage(1); // Reset to page 1 when changing items per page
+  };
+
+  const handleEditMalote = (malote: Malote) => {
+    setMaloteEmEdicao(malote);
+    setDialogAberto(true);
   };
 
   if (loading) {
@@ -76,7 +81,7 @@ export const MalotesContent = ({
         malotes={currentMalotes}
         onDelete={onDelete}
         onSelectionChange={onSelectionChange}
-        // Remove the onEdit prop completely to disable editing
+        onEdit={handleEditMalote}
       />
 
       <MalotesPagination 
@@ -87,7 +92,6 @@ export const MalotesContent = ({
         onItemsPerPageChange={handleItemsPerPageChange}
       />
 
-      {/* Keep the dialog component but it won't be shown since dialogAberto is never set to true */}
       <MaloteFormDialog
         open={dialogAberto}
         onClose={() => {
