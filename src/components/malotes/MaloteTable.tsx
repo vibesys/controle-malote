@@ -30,55 +30,63 @@ export function MaloteTable({
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Only handle keyboard events when the table area is focused
       const scrollContainer = tableScrollRef.current;
-      if (!scrollContainer || document.activeElement?.tagName === 'INPUT') return;
+      if (!scrollContainer) return;
 
-      // Check if the focused element is within our table container
-      const focusedElement = document.activeElement;
-      const isTableFocused = scrollContainer.contains(focusedElement) || focusedElement === scrollContainer;
+      // Check if the scroll container is focused or contains the focused element
+      const activeElement = document.activeElement;
+      const isTableAreaFocused = scrollContainer === activeElement || scrollContainer.contains(activeElement);
       
-      if (!isTableFocused) return;
+      if (!isTableAreaFocused) return;
 
       const scrollAmount = 200;
+      let handled = false;
       
       switch (event.key) {
         case 'ArrowLeft':
           event.preventDefault();
           event.stopPropagation();
-          scrollContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+          scrollContainer.scrollLeft -= scrollAmount;
+          handled = true;
           break;
         case 'ArrowRight':
           event.preventDefault();
           event.stopPropagation();
-          scrollContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+          scrollContainer.scrollLeft += scrollAmount;
+          handled = true;
           break;
         case 'Home':
           if (event.ctrlKey) {
             event.preventDefault();
             event.stopPropagation();
-            scrollContainer.scrollTo({ left: 0, behavior: 'smooth' });
+            scrollContainer.scrollLeft = 0;
+            handled = true;
           }
           break;
         case 'End':
           if (event.ctrlKey) {
             event.preventDefault();
             event.stopPropagation();
-            scrollContainer.scrollTo({ left: scrollContainer.scrollWidth, behavior: 'smooth' });
+            scrollContainer.scrollLeft = scrollContainer.scrollWidth;
+            handled = true;
           }
           break;
       }
+
+      if (handled) {
+        console.log(`Scroll handled: ${event.key}, new scrollLeft: ${scrollContainer.scrollLeft}`);
+      }
     };
 
-    // Add global keyboard listener
-    document.addEventListener('keydown', handleKeyDown, true);
+    // Add event listener to the document but check focus within the handler
+    document.addEventListener('keydown', handleKeyDown, { capture: true });
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown, true);
+      document.removeEventListener('keydown', handleKeyDown, { capture: true });
     };
   }, []);
 
-  const handleTableClick = () => {
+  const handleTableClick = (event: React.MouseEvent) => {
     if (tableScrollRef.current) {
       tableScrollRef.current.focus();
     }
@@ -89,11 +97,13 @@ export function MaloteTable({
       <CardContent className="pt-6">
         <div 
           ref={tableScrollRef}
-          className="overflow-x-auto border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-          style={{ scrollBehavior: 'smooth' }}
+          className="overflow-x-auto border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 cursor-pointer"
           tabIndex={0}
           onClick={handleTableClick}
-          onFocus={handleTableClick}
+          onKeyDown={(e) => {
+            // Allow the useEffect handler to manage all keyboard events
+            // This ensures proper event handling within the component
+          }}
         >
           <DataTable
             data={formattedMalotes}
@@ -119,7 +129,7 @@ export function MaloteTable({
           />
         </div>
         <div className="mt-2 text-xs text-gray-500 text-center">
-          Clique na tabela e use: ← → para navegar | Ctrl+Home/End para ir ao início/fim
+          Clique na tabela e use: ← → para navegar horizontalmente | Ctrl+Home/End para ir ao início/fim
         </div>
       </CardContent>
     </Card>
