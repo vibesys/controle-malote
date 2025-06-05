@@ -18,8 +18,7 @@ export function MaloteTable({
   onEdit,
   onDelete 
 }: MaloteTableProps) {
-  const tableRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const tableScrollRef = useRef<HTMLDivElement>(null);
 
   // Format dates for display
   const formattedMalotes = malotes.map(malote => ({
@@ -31,105 +30,96 @@ export function MaloteTable({
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Only handle if no input is focused
-      if (document.activeElement?.tagName === 'INPUT') return;
+      // Only handle keyboard events when the table area is focused
+      const scrollContainer = tableScrollRef.current;
+      if (!scrollContainer || document.activeElement?.tagName === 'INPUT') return;
+
+      // Check if the focused element is within our table container
+      const focusedElement = document.activeElement;
+      const isTableFocused = scrollContainer.contains(focusedElement) || focusedElement === scrollContainer;
       
-      const container = tableRef.current;
-      if (!container) return;
+      if (!isTableFocused) return;
 
       const scrollAmount = 200;
       
       switch (event.key) {
         case 'ArrowLeft':
           event.preventDefault();
-          container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+          event.stopPropagation();
+          scrollContainer.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
           break;
         case 'ArrowRight':
           event.preventDefault();
-          container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+          event.stopPropagation();
+          scrollContainer.scrollBy({ left: scrollAmount, behavior: 'smooth' });
           break;
         case 'Home':
           if (event.ctrlKey) {
             event.preventDefault();
-            container.scrollTo({ left: 0, behavior: 'smooth' });
+            event.stopPropagation();
+            scrollContainer.scrollTo({ left: 0, behavior: 'smooth' });
           }
           break;
         case 'End':
           if (event.ctrlKey) {
             event.preventDefault();
-            container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' });
+            event.stopPropagation();
+            scrollContainer.scrollTo({ left: scrollContainer.scrollWidth, behavior: 'smooth' });
           }
           break;
       }
     };
 
-    const handleClick = () => {
-      if (containerRef.current) {
-        containerRef.current.focus();
-      }
-    };
-
-    // Add event listeners
-    document.addEventListener('keydown', handleKeyDown);
-    if (containerRef.current) {
-      containerRef.current.addEventListener('click', handleClick);
-    }
-
-    // Auto focus on mount
-    setTimeout(() => {
-      if (containerRef.current) {
-        containerRef.current.focus();
-      }
-    }, 100);
+    // Add global keyboard listener
+    document.addEventListener('keydown', handleKeyDown, true);
 
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      if (containerRef.current) {
-        containerRef.current.removeEventListener('click', handleClick);
-      }
+      document.removeEventListener('keydown', handleKeyDown, true);
     };
   }, []);
+
+  const handleTableClick = () => {
+    if (tableScrollRef.current) {
+      tableScrollRef.current.focus();
+    }
+  };
 
   return (
     <Card className="shadow-md">
       <CardContent className="pt-6">
         <div 
-          ref={containerRef}
-          className="focus:outline-none cursor-pointer"
+          ref={tableScrollRef}
+          className="overflow-x-auto border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+          style={{ scrollBehavior: 'smooth' }}
           tabIndex={0}
-          onClick={() => containerRef.current?.focus()}
+          onClick={handleTableClick}
+          onFocus={handleTableClick}
         >
-          <div 
-            ref={tableRef} 
-            className="overflow-x-auto border rounded-md"
-            style={{ scrollBehavior: 'smooth' }}
-          >
-            <DataTable
-              data={formattedMalotes}
-              columns={maloteColumns}
-              onSelectionChange={onSelectionChange}
-              enableSelection={true}
-              onRowClick={undefined}
-              actions={onDelete ? (row) => (
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete(row);
-                  }}
-                  className="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M3 6h18"></path>
-                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                  </svg>
-                </button>
-              ) : undefined}
-            />
-          </div>
-          <div className="mt-2 text-xs text-gray-500 text-center">
-            Clique na tabela e use: ← → para navegar | Ctrl+Home/End para ir ao início/fim
-          </div>
+          <DataTable
+            data={formattedMalotes}
+            columns={maloteColumns}
+            onSelectionChange={onSelectionChange}
+            enableSelection={true}
+            onRowClick={undefined}
+            actions={onDelete ? (row) => (
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(row);
+                }}
+                className="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 6h18"></path>
+                  <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                  <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                </svg>
+              </button>
+            ) : undefined}
+          />
+        </div>
+        <div className="mt-2 text-xs text-gray-500 text-center">
+          Clique na tabela e use: ← → para navegar | Ctrl+Home/End para ir ao início/fim
         </div>
       </CardContent>
     </Card>
