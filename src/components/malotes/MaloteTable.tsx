@@ -32,7 +32,7 @@ export function MaloteTable({
     const handleKeyPress = (event: KeyboardEvent) => {
       if (!tableRef.current) return;
 
-      const scrollAmount = 200;
+      const scrollAmount = 300; // Increased scroll amount for better navigation
       
       if (event.key === 'ArrowLeft') {
         event.preventDefault();
@@ -40,17 +40,40 @@ export function MaloteTable({
       } else if (event.key === 'ArrowRight') {
         event.preventDefault();
         tableRef.current.scrollLeft += scrollAmount;
+      } else if (event.key === 'Home') {
+        event.preventDefault();
+        tableRef.current.scrollLeft = 0;
+      } else if (event.key === 'End') {
+        event.preventDefault();
+        tableRef.current.scrollLeft = tableRef.current.scrollWidth;
       }
     };
 
+    // Add focus to the table container to ensure it can receive keyboard events
+    const focusTable = () => {
+      if (tableRef.current) {
+        tableRef.current.focus();
+      }
+    };
+
+    // Set up the event listener
     window.addEventListener('keydown', handleKeyPress);
+    
+    // Focus the table when component mounts
+    focusTable();
+
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, []);
 
   return (
     <Card className="shadow-md">
       <CardContent className="pt-6">
-        <div ref={tableRef} className="overflow-x-auto">
+        <div 
+          ref={tableRef} 
+          className="overflow-x-auto focus:outline-none"
+          tabIndex={0}
+          style={{ scrollBehavior: 'smooth' }}
+        >
           <DataTable
             data={formattedMalotes}
             columns={maloteColumns}
@@ -73,6 +96,9 @@ export function MaloteTable({
               </button>
             ) : undefined}
           />
+        </div>
+        <div className="mt-2 text-xs text-gray-500 text-center">
+          Use as setas ← → do teclado para navegar horizontalmente | Home/End para ir ao início/fim
         </div>
       </CardContent>
     </Card>
